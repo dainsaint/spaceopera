@@ -32,22 +32,38 @@
       width: 100px;
       height: 100px;
       border-radius: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bio-sequence__chit::after {
+      content: '';
+      display: block;
+      position: absolute;
+      inset: 0px;
+      background: radial-gradient(white, black);
+      opacity: .2;
+      mix-blend-mode: soft-light;
     }
 
     .bio-sequence__chit--R {
       background-color: red;
+      box-shadow: 0px 0px 40px red;
     }
 
     .bio-sequence__chit--G {
-      background-color: green;
+      background-color: limegreen;
+      box-shadow: 0px 0px 40px limegreen;
     }
 
     .bio-sequence__chit--B {
-      background-color: blue;
+      background-color: deepskyblue;
+      box-shadow: 0px 0px 40px deepskyblue;
     }
 
     .bio-sequence__chit--W {
-      background-color: white;
+      background-color: #EEEEFF;
+      box-shadow: 0px 0px 40px white;
     }
 
     .bio-name {
