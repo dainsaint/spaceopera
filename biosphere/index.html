@@ -158,7 +158,7 @@
       return container;
     }
 
-    window.addEventListener("keydown", () => {
+    const regenerate = () => {
       const main = document.querySelector(".bio-main")
       main.innerHTML = "";
 
@@ -167,9 +167,10 @@
         const display = generateSequenceDisplay(sequence);
         main.appendChild(display);
       }
+    }
 
-    })
-
+    window.addEventListener("keydown", regenerate)
+    regenerate();
   </script>
 </body>
 
