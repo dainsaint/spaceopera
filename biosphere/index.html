@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Biosphere</title>
+  <style type="text/css">
+    .bio-main {
+      background: black;
+      color: white;
+      position: absolute;
+      inset: 0px;
+      display: flex;
+      gap: 30px;
+      flex-direction: column;
+      align-content: center;
+      justify-content: center;
+    }
+
+    .bio-display {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bio-sequence {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .bio-sequence__chit {
+      width: 100px;
+      height: 100px;
+      border-radius: 15px;
+    }
+
+    .bio-sequence__chit--R {
+      background-color: red;
+    }
+
+    .bio-sequence__chit--G {
+      background-color: green;
+    }
+
+    .bio-sequence__chit--B {
+      background-color: blue;
+    }
+
+    .bio-sequence__chit--W {
+      background-color: white;
+    }
+
+    .bio-name {
+      text-transform: uppercase;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 24px;
+      letter-spacing: 10px;
+      font-weight: bold;
+      ;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bio-main">
+
+  </div>
+
+  <template id="dom-sequence">
+    <div class="bio-display">
+      <div class="bio-sequence"></div>
+      <div class="bio-name"></div>
+    </div>
+  </template>
+
+  <script type="text/javascript">
+    const colors = ["B", "G", "R", "W"];
+
+    const order = [
+      "BB", "BG", "BR", "BW",
+      "GG", "GR", "GW", "GB",
+      "RR", "RW", "RB", "RG",
+      "WW", "WB", "WG", "WR",
+    ]
+    const adjectives = [
+      "hydraulic", "organic", "thermal", "fluidic",
+      "nuclear", "carbon", "organic", "graphene",
+      "quantum", "magnetic", "photonic", "solar",
+      "atomic", "vapor", "prismatic", "static"
+    ]
+
+    const aspects = [
+      "liquid", "phase", "time", "wave",
+      "solid", "matter", "gravity", "force",
+      "plasma", "energy", "light", "warp",
+      "gas", "vaccuum", "space", "flux"
+    ];
+
+    const equipment = [
+      "turbine", "compressor", "converter", "condenser",
+      "crystal", "exciter", "sublimator", "scrubber",
+      "engine", "circuit", "capacitor", "laser",
+      "manifold", "piston", "exchange", "filter"
+    ]
+
+    const generateSequence = () => {
+      let sequence = ""
+      for (let i = 0; i < 6; i++)
+        sequence += colors[Math.floor(Math.random() * colors.length)];
+
+      return sequence;
+    }
+
+    const generateName = (sequence) => {
+      const banks = [adjectives, aspects, equipment];
+      const result = [];
+      for (let i = 0; i < 3; i++) {
+        const bank = banks[i];
+        const fragment = sequence.substring(i * 2, i * 2 + 2);
+        const index = order.indexOf(fragment);
+        result.push(bank[index])
+      }
+
+      return result.join(" ");
+    }
+
+    const generateSequenceDisplay = (sequence) => {
+      const template = document.getElementById("dom-sequence")
+      const container = template.content.cloneNode(true);
+      const display = container.querySelector(".bio-sequence");
+
+      display.innerHTML = "";
+      for (const color of sequence) {
+        const chit = document.createElement("div");
+        chit.classList.add("bio-sequence__chit", `bio-sequence__chit--${color}`);
+        display.appendChild(chit);
+      }
+
+      const name = generateName(sequence);
+      container.querySelector(".bio-name").innerText = name;
+      return container;
+    }
+
+    window.addEventListener("keydown", () => {
+      const main = document.querySelector(".bio-main")
+      main.innerHTML = "";
+
+      for (let i = 0; i < 4; i++) {
+        const sequence = generateSequence();
+        const display = generateSequenceDisplay(sequence);
+        main.appendChild(display);
+      }
+
+    })
+
+  </script>
+</body>
+
+</html>
