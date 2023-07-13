@@ -28,6 +28,8 @@ const load = () => {
     resetGame();
   }
 
+  if(!game) resetGame();
+
   states.global.load?.();
   
 }
@@ -401,6 +403,7 @@ const setup = () => {
   load();
   transition( game.state );
 }
+
 
 // resetGame();
 setup();
