@@ -1,0 +1,180 @@
+body {
+  background: black;
+  font-family: 'Exo', monospace;
+  color: #EEEEFF;
+
+}
+
+.hidden {
+  display: none !important;
+}
+
+h1 {
+  align-items: center;
+  text-align: center;  
+  font-size: 64px;
+  font-weight: 100;
+  grid-area: heading;
+}
+
+.bio-layout {
+  position: absolute;
+  inset: 0px;
+  display: grid;
+  grid-template-areas:
+    "heading"
+    "main"
+    "controls";
+
+  grid-template-rows: 1fr 1fr 1fr;
+  align-items: center;
+  justify-content: center;
+}
+
+.bio-controls {
+  grid-area: controls;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+button {
+  background: darkslategrey;
+  border: none;
+  padding: 15px;
+  font-size: 20px;
+  text-transform: uppercase;
+  font-family: 'Exo', monospace;
+  font-weight: bold;
+  border-radius: 15px;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: teal;
+}
+
+input {
+  background:  black;
+  border: 1px solid white;
+  padding: 15px;
+  font-size: 20px;
+  text-transform: uppercase;
+  font-family: 'Exo', monospace;
+  font-weight: bold;
+  border-radius: 15px;
+  color: white;
+  cursor: pointer;
+}
+
+.bio-input {
+  display: flex;
+  gap: 15px;
+}
+
+.bio-main {
+  grid-area: main;
+  color: white;
+  display: flex;
+  gap: 30px;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  --chit-size: 100px;
+}
+
+.bio-display {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bio-sequence {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.bio-sequence__chit {
+  width: var(--chit-size);
+  height: var(--chit-size);
+  border-radius: calc(var(--chit-size) / 5);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.bio-sequence__chit::after {
+  content: '';
+  display: block;
+  position: absolute;
+  inset: 0px;
+  background: radial-gradient(white, black);
+  opacity: .2;
+  mix-blend-mode: soft-light;
+  
+}
+
+.bio-sequence__chit--R {
+  background-color: red;
+  box-shadow: 0px 0px 40px red;
+}
+
+.bio-sequence__chit--G {
+  background-color: limegreen;
+  box-shadow: 0px 0px 40px limegreen;
+}
+
+.bio-sequence__chit--B {
+  background-color: deepskyblue;
+  box-shadow: 0px 0px 40px deepskyblue;
+}
+
+.bio-sequence__chit--Y {
+  background-color: orange;
+  box-shadow: 0px 0px 40px orange;
+}
+
+.bio-sequence__chit--W {
+  background-color: #EEEEFF;
+  box-shadow: 0px 0px 40px white;
+}
+
+#page-retrograde .bio-sequence__good .bio-sequence__chit {
+  border: 3px solid white;
+}
+
+.bio-name {
+  text-transform: uppercase;
+  text-align: center;
+  font-family: 'Exo', monospace;;
+  letter-spacing: 2px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.bio-retrograde-row {
+  display: flex;
+  gap: 15px;
+}
+
+.bio-retrograde-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+
+.bio-sequence__small {
+  --chit-size: 20px;
+}
+
+.bio-sequence__small .bio-display {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+}
+
+.bio-sequence__small .bio-display .bio-name {
+  text-align: left;
+}

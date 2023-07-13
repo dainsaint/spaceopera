@@ -3,86 +3,99 @@
 
 <head>
   <title>String Theory</title>
-  <style type="text/css">
-    .bio-main {
-      background: black;
-      color: white;
-      position: absolute;
-      inset: 0px;
-      display: flex;
-      gap: 30px;
-      flex-direction: column;
-      align-content: center;
-      justify-content: center;
+  <link rel="stylesheet" type="text/css" href="./styles.css"/>
 
-    }
-
-    .bio-display {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .bio-sequence {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-    }
-
-    .bio-sequence__chit {
-      width: 100px;
-      height: 100px;
-      border-radius: 15px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .bio-sequence__chit::after {
-      content: '';
-      display: block;
-      position: absolute;
-      inset: 0px;
-      background: radial-gradient(white, black);
-      opacity: .2;
-      mix-blend-mode: soft-light;
-    }
-
-    .bio-sequence__chit--R {
-      background-color: red;
-      box-shadow: 0px 0px 40px red;
-    }
-
-    .bio-sequence__chit--G {
-      background-color: limegreen;
-      box-shadow: 0px 0px 40px limegreen;
-    }
-
-    .bio-sequence__chit--B {
-      background-color: deepskyblue;
-      box-shadow: 0px 0px 40px deepskyblue;
-    }
-
-    .bio-sequence__chit--W {
-      background-color: gold;
-      box-shadow: 0px 0px 40px gold;
-    }
-
-    .bio-name {
-      text-transform: uppercase;
-      text-align: center;
-      font-family: monospace;
-      font-size: 20px;
-      letter-spacing: 2px;
-      font-weight: bold;
-      ;
-    }
-  </style>
 </head>
 
 <body>
-  <div class="bio-main">
+
+  <div class="bio-progress js-progress">
 
   </div>
+
+  <div id="page-setup" class="bio-layout js-page hidden">
+    <h1>STRING THEORY</h1>
+    
+    <div class="bio-main">
+      <input class="js-faction js-faction-0" placeholder="Faction 1" />
+      <input class="js-faction js-faction-1" placeholder="Faction 2" />
+      <input class="js-faction js-faction-2" placeholder="Faction 3" />
+    </div>
+  
+    <div class="bio-controls">
+      <button name="factions">Enter Faction Names</button>
+    </div>
+  </div>
+
+  <div id="page-apex" class="bio-layout js-page hidden">
+    <h1 class="js-apex-title">APEX I</h1>
+    
+    <div class="bio-main js-apex-sequences">
+
+    </div>
+
+    <div class="bio-controls">
+      <button name="retrograde">Begin Retrograde</button>
+      <button name="gm">⚙️</button>
+    </div>
+  </div>
+
+  <div id="page-retrograde" class="bio-layout js-page hidden">
+    <h1 class="js-retrograde-title">RETROGRADE I</h1>
+  
+    <div class="bio-main js-retrograde-sequences">
+  
+    </div>
+  
+    <div class="bio-controls">
+      <button name="apex">Back to Apex</button>
+      <button name="cycle">Complete Cycle</button>
+      <button name="gm">⚙️</button>
+      
+    </div>
+  </div>
+
+  <div id="page-epilogue" class="bio-layout js-page hidden">
+    <h1 class="">EPILOGUE</h1>
+  
+    <div class="bio-main bio-sequence__small js-epilogue-sequences">
+  
+    </div>
+  
+    <div class="bio-controls">
+      <button name="gm">⚙️</button>
+    </div>
+  </div>
+
+  <div id="page-gm" class="bio-layout js-page hidden">
+    <h1>GM panel</h1>
+  
+    <div class="bio-main">
+      
+    </div>
+
+    <div class="bio-controls">
+      <button name="reset">Reset Game</button>
+      <button name="secrets">Show Secrets</button>
+      <button name="back">Back To Game</button>
+    </div>
+  
+  </div>
+
+  <div id="page-secrets" class="bio-layout js-page hidden">
+    <h1>Secrets</h1>
+  
+    <div class="bio-main js-secret-sequences">
+      
+    </div>
+
+    <div class="bio-controls">
+      <button name="back">Back To Game</button>
+    </div>
+  
+  </div>
+
+
 
   <template id="dom-sequence">
     <div class="bio-display">
@@ -91,130 +104,19 @@
     </div>
   </template>
 
-  <script type="text/javascript">
-    const colors = ["B", "G", "R", "W"];
-
-    const order = [
-      "BB", "BG", "BR", "BW",
-      "GG", "GR", "GW", "GB",
-      "RR", "RW", "RB", "RG",
-      "WW", "WB", "WG", "WR",
-    ]
-    // const adjectives = [
-    //   "hydraulic", "organic", "thermal", "fluidic",
-    //   "nuclear", "carbon", "nano", "graphene",
-    //   "quantum", "magnetic", "photonic", "solar",
-    //   "atomic", "vapor", "prismatic", "static"
-    // ]
-
-    // const aspects = [
-    //   "liquid", "phase", "time", "wave",
-    //   "solid", "matter", "gravity", "force",
-    //   "plasma", "energy", "light", "warp",
-    //   "gas", "vacuum", "space", "flux"
-    // ];
-
-    // const equipment = [
-    //   "turbine", "compressor", "converter", "condenser",
-    //   "crystal", "exciter", "sublimator", "scrubber",
-    //   "engine", "circuit", "capacitor", "laser",
-    //   "manifold", "piston", "exchange", "filter"
-    // ]
-
-
-    const subjects = [
-      "the past", "a broken heart", "the path", "a stranger",
-      "the present", "a couple", "a wounded soul", "one",
-      "the future", "the lost one", "a voice", "this group",
-      "the timeline", "a joyful laugh", "a distant echo", "a chance encounter"
-    ]
-
-    const verbs = [
-      "is", "was", "avoids", "was never",
-      "understands", "must be", "gains", "may mend",
-      "may destroy", "creates", "loses", "nurtures",
-      "answers", "redefines", "betrays", "demands"
-    ];
-
-    const objects = [
-      "alone", "in the dark", "our best intentions", "a hidden agenda",
-      "what may haunt us", "what must be found", "a discovery", "the question",
-      "what could have been", "an option", "with utmost care", "an opening",
-      "the end goal", "without mercy", "an advantage", "forever"
-    ]
-
-    const generateSequence = () => {
-      let sequence = ""
-      for (let i = 0; i < 6; i++)
-        sequence += colors[Math.floor(Math.random() * colors.length)];
-
-      return sequence;
-    }
-
-    const generateName = (sequence) => {
-      const banks = [subjects, verbs, objects];
-      const result = [];
-      for (let i = 0; i < 3; i++) {
-        const bank = banks[i];
-        const fragment = sequence.substring(i * 2, i * 2 + 2);
-        const index = order.indexOf(fragment);
-        result.push(bank[index])
-      }
-
-      return result.join(" ");
-    }
-
-    const generateSequenceDisplay = (sequence) => {
-      const template = document.getElementById("dom-sequence")
-      const container = template.content.cloneNode(true);
-      const display = container.querySelector(".bio-sequence");
-
-      display.innerHTML = "";
-      for (const color of sequence) {
-        const chit = document.createElement("div");
-        chit.classList.add("bio-sequence__chit", `bio-sequence__chit--${color}`);
-        display.appendChild(chit);
-      }
-
-      const name = generateName(sequence);
-      container.querySelector(".bio-name").innerText = name;
-      return container;
-    }
-
-    const isRedundant = (sequence, sequences) => {
-      
-      const hasExisting = sequences.some( s => {
-       for( let i = 0; i < 6; i += 2 ) {
-        if( s.substr(i, 2) === sequence.substr(i, 2))
-          return true;
-       }
-       return false;
-      })
-
-      return hasExisting;
-    }
-
-    const regenerate = () => {
-      const main = document.querySelector(".bio-main")
-      const sequences = [];
-      main.innerHTML = "";
-
-      for (let i = 0; i < 4; i++) {
-        let sequence;
-        while( true ) {
-          sequence = generateSequence();
-          if( !isRedundant(sequence, sequences) )
-            break;
-        }
-        sequences.push( sequence );
-        const display = generateSequenceDisplay(sequence);
-        main.appendChild(display);
-      }
-    }
-
-    window.addEventListener("keydown", regenerate)
-    regenerate();
-  </script>
+  <script type="module" src="main.js"></script>
 </body>
 
 </html>
+
+
+<pre>
+
+What do we NEED?
+----------------
+
+- [ ] How many beads?
+- [X] Move through days
+- [X] Display progress
+
+</pre>
