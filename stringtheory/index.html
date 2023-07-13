@@ -14,7 +14,9 @@
   </div>
 
   <div id="page-setup" class="bio-layout js-page hidden">
-    <h1>STRING THEORY</h1>
+    <div class="bio-header">
+      <h1>STRING THEORY</h1>
+    </div>
     
     <div class="bio-main">
       <input class="js-faction js-faction-0" placeholder="Faction 1" />
@@ -28,7 +30,10 @@
   </div>
 
   <div id="page-apex" class="bio-layout js-page hidden">
-    <h1 class="js-apex-title">APEX I</h1>
+    <div class="bio-header">
+      <h1 class="js-apex-title">APEX I</h1>
+      <div class="bio-factions js-apex-factions"></div>
+    </div>
     
     <div class="bio-main js-apex-sequences">
 
@@ -41,7 +46,10 @@
   </div>
 
   <div id="page-retrograde" class="bio-layout js-page hidden">
-    <h1 class="js-retrograde-title">RETROGRADE I</h1>
+    <div class="bio-header">
+      <h1 class="js-retrograde-title">RETROGRADE I</h1>
+      <div class="bio-factions js-retrograde-factions"></div>
+    </div>
   
     <div class="bio-main js-retrograde-sequences">
   
@@ -56,7 +64,10 @@
   </div>
 
   <div id="page-epilogue" class="bio-layout js-page hidden">
-    <h1 class="">EPILOGUE</h1>
+    <div class="bio-header">
+      <h1 class="">EPILOGUE</h1>
+      <div class="bio-factions js-epilogue-factions"></div>
+    </div>
   
     <div class="bio-main bio-sequence__small js-epilogue-sequences">
   
@@ -68,7 +79,9 @@
   </div>
 
   <div id="page-gm" class="bio-layout js-page hidden">
-    <h1>GM panel</h1>
+    <div class="bio-header">
+      <h1>GM panel</h1>
+    </div>
   
     <div class="bio-main">
       
@@ -83,7 +96,9 @@
   </div>
 
   <div id="page-secrets" class="bio-layout js-page hidden">
-    <h1>Secrets</h1>
+    <div class="bio-header">
+      <h1>Secrets</h1>
+    </div>
   
     <div class="bio-main js-secret-sequences">
       
@@ -104,6 +119,12 @@
     </div>
   </template>
 
+  <template id="dom-faction">
+    <div class="bio-faction">
+
+    </div>
+  </template>
+
   <script type="module" src="main.js"></script>
 </body>
 
@@ -111,12 +132,5 @@
 
 
 <pre>
-
-What do we NEED?
-----------------
-
-- [ ] How many beads?
-- [X] Move through days
-- [X] Display progress
 
 </pre>

@@ -42,6 +42,16 @@ const generateSequence = () => {
   return sequence;
 }
 
+const generateLostFragment = () => {
+  const numWords = 1 + Math.floor(Math.random() * 2);
+  const words = [];
+  for( let i = 0; i < numWords; i++ ) {
+    const wordLength = 2 + Math.floor(Math.random() * 6);
+    words.push( "░".repeat(wordLength) );
+  }
+  return words.join(" ");
+}
+
 const generateName = (sequence) => {
   const banks = [subjects, verbs, objects];
   const result = [];
@@ -49,7 +59,7 @@ const generateName = (sequence) => {
     const bank = banks[i];
     const fragment = sequence.substring(i * 2, i * 2 + 2);
     const index = order.indexOf(fragment);
-    result.push(bank[index] || "░░░░░░");
+    result.push(bank[index] || generateLostFragment());
   }
 
   return result.join(" ");
@@ -145,6 +155,20 @@ const navigate = (id) => {
   document.getElementById(`page-${id}`)?.classList.remove("hidden");
 };
 
+const displayFactions = (target) => {
+  const factions = document.querySelector(target);
+  factions.innerHTML = "";
+
+  game.factions.forEach((faction, i) => {
+    const display = document.createElement("div");
+    display.classList.add("bio-faction");
+    if (i == game.cycle) display.classList.add("is-current");
+
+    display.innerHTML = faction;
+
+    factions?.append(display);
+  });
+}
 
 let lastState;
 
@@ -197,6 +221,8 @@ const states = {
         const display = generateSequenceDisplay(sequence.sequence);
         main.appendChild(display);
       }
+
+      displayFactions(".js-apex-factions");
     },
     on: {
       generate: () => {},
@@ -253,6 +279,11 @@ const states = {
 
         main?.appendChild(row);
       }
+
+
+
+      displayFactions(".js-retrograde-factions");
+
     },
     on: {
       apex: () => {
