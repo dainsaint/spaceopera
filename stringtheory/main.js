@@ -332,12 +332,34 @@ const states = {
   gm: {
     enter: (s) => {
       (lastState = s)
+      const textarea = document.querySelector(".js-game-state");
+      textarea.value = JSON.stringify( game, null, 2 );
+      const message = document.querySelector(".js-gm-message");
+      message.innerHTML = "";
       return false;
     },
     on: {
       reset: () => {
         resetGame();
         transition(game.state);
+      },
+      import: () => {
+        const message = document.querySelector(".js-gm-message");
+
+        let importedGame;
+        try {
+          const textarea = document.querySelector(".js-game-state");
+          importedGame = JSON.parse( textarea.value );
+          
+        } catch(e) {
+          message.innerHTML = e;
+        }
+
+        if( importedGame ) {
+          game = importedGame;
+          message.innerHTML = "Import successful";
+          setTimeout(() => message.innerHTML="", 2000);
+        }
       },
       secrets: () => {
         transition("secrets");

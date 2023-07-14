@@ -58,7 +58,7 @@ button:hover {
   background: teal;
 }
 
-input {
+input, textarea {
   background:  black;
   border: 1px solid white;
   padding: 15px;
@@ -70,6 +70,13 @@ input {
   color: white;
   cursor: pointer;
 }
+
+textarea{
+  height: 500px;
+  text-transform: none;
+  font-size: 12px;
+}
+
 
 .bio-input {
   display: flex;
