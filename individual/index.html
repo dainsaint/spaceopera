@@ -1,0 +1,64 @@
+<html>
+  <body>
+    <pre></pre>
+    <pre class="main"></pre>
+  <script type="text/javascript">
+      const societies = [[], [], [], []];
+      const players = [3, 4, 5];
+      const names = ["Vidalians", "Valdarians", "Ooles", "Galaxy"];
+      const thresholds = [12, 14, 16, 30];
+
+      function runSim() {
+        const node = document.querySelector("pre");
+        const main = document.querySelector(".main");
+        node.innerText = "";
+        const roll = () => Math.ceil(Math.random() * 6);
+
+        const totals = [0, 0, 0, 0, 0, 0];
+        
+
+        for (let numSocieties = 0; numSocieties < 3; numSocieties++) {
+          // for (let numPlayers = 7; numPlayers < 8; numPlayers++) {
+            const pursuits = [0, 0, 0, 0, 0, 0];
+            const numPlayers = players[numSocieties]
+            for (let player = 0; player < numPlayers; player++) {
+              for (let i = 0; i < 2; i++) {
+                const idx = roll();
+                const amount = roll();
+                pursuits[idx - 1] += amount;
+              }
+            }
+            node.append(
+              `${names[numSocieties]}\n${numPlayers} players:\t${pursuits.join('\t')}\n\n`
+            )
+            pursuits.forEach((n, i) => totals[i] += n);
+          // }
+
+          societies[numSocieties].push(pursuits);
+          societies[3].push(totals);
+
+          node.append("\n\n\n");
+        }
+
+        node.append(
+          `TOTALS:\t\t${totals.join('\t')}\n\n`
+        )
+
+        main.innerText = "";
+        
+        societies.forEach( (society, i) => {
+          const threshold = thresholds[i];
+          const timesHitThreshold = society.filter( pursuit => pursuit.some( x => x >= threshold) ).length;
+          main.append(`${names[i]}: ${(100 * timesHitThreshold/society.length).toFixed(1) }%\n\n`);
+        })
+      }
+      
+      for(let i = 0; i < 5000; i++)
+        runSim();
+
+      document.addEventListener("keydown", runSim);
+      
+
+  </script>
+</body>
+</html>
