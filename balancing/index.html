@@ -73,13 +73,17 @@
       const success = roll.some( x => x == 6 );
       const crit = roll.filter( x => x == 6).length > 1;
 
-      const create = (success && Math.random() <= parameters.success / 100) || (crit && Math.random() <= parameters.critsuccess / 100);
+      const shouldCreate = (success && Math.random() <= parameters.success / 100) || (crit && Math.random() <= parameters.critsuccess / 100);
+      const create = shouldCreate ? 1 : 0;
       const destroy = Math.floor( parameters.impacted / 100 * impacted );
 
       after = before + create - destroy;
      
       const round = {
-        used,
+        stats: {
+          used,
+          risk: parameters.risk
+        },
         roll,
         results: {
           impacted,
@@ -104,6 +108,34 @@
     return game;
   }
 
+  const printRound = ( round ) => {
+    const die = [ "&#9856", "&#9857", "&#9858", "&#9859", "&#9860", "&#9861" ];
+    const roll = round.roll.map( value => `<span class="die die-${value} ${ value <= round.stats.risk ? "impacted" : ""}">${die[value - 1]}</span>` ).join(' ');
+    return `${roll} | +${round.response.create}, -${round.response.destroy} | ${round.resources.before} => ${round.resources.after}` 
+  }
+
+  const displayResults = ( results )  => {
+    console.log(results);
+    const bars = document.querySelector(".js-bars");
+
+    bars.innerHTML = "";
+
+    for (const round of results) {
+      const bar = document.createElement("div");
+      bar.classList.add("bar");
+      bar.style.setProperty("--value", round.resources.before);
+      bar.setAttribute("data-value", round.resources.before);
+
+      bars.appendChild(bar);
+    }
+
+    const maxResources = results.reduce((acc, cur) => Math.max(acc, cur.resources.before), 0);
+    bars.style.setProperty("--max", maxResources);
+
+    const log = document.querySelector(".js-log");
+    log.innerHTML = results.map(printRound).join("\n");
+  }
+
   window.addEventListener("DOMContentLoaded", () => {
     loadParameters();
 
@@ -122,24 +154,11 @@
     });
 
     document.querySelector("button").addEventListener("click", () => {
-      const results = simulate();
-      const bars = document.querySelector(".js-bars");
-      bars.innerHTML = "";
-      for( const round of results ) {
-        const bar = document.createElement("div");
-        bar.classList.add("bar");
-        bar.style.setProperty("--resources", round.resources.before);
-        bar.setAttribute("data-value", round.resources.before);
-
-        bars.appendChild(bar);
-      }
-
-      const maxResources = results.reduce( (acc, cur) => Math.max( acc, cur.resources.before), 0);
-      bars.style.setProperty("--max", maxResources);
-      
-
+      displayResults( simulate() )
     });
+
     updatePopulation();
+    displayResults(simulate())
   })
 
 </script>
@@ -154,15 +173,12 @@
 
     width: 100%;
     height: 40vh;
-
-    margin-top: 80px;
     border: 1px solid lightgray;
   }
 
   .bar {
-    --value: calc( var(--resources) / var(--max) );
 
-    height: calc( var( --value ) * 90% );
+    height: calc( var(--value) / var(--max) * 90% );
     width: 30px;
     background: currentColor;
     position: relative;
@@ -179,9 +195,13 @@
   }
 
   main {
-    display: grid;
-    grid-template-columns: 50% 1fr;
-    grid-gap: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+  }
+
+  section {
+    width: 100%;
   }
 
   input {
@@ -198,6 +218,31 @@
     margin: 0px;;
   }
 
+  pre {
+    font-size: 24px;
+  }
+
+  .die {
+    color: black;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    font-size: 2em;
+    background: white;
+    padding: 2px;
+    font-weight: bold;
+    line-height: .5;
+    border-radius: 3px;
+  }
+
+  .die-6 {
+    background: limegreen;
+  }
+
+  .die.impacted {
+    background: red;
+  }
 </style>
 
 <body>
@@ -234,9 +279,16 @@
   </aside>
 
   <section>
+    <h3>Resources</h3>
     <div class="bars js-bars">
 
     </div>
+
+
+    <h3>Rounds</h3>
+    <pre class="js-log">
+
+    </pre>
   </section>
 
 
