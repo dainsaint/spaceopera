@@ -361,10 +361,20 @@
   li {
     display: block;
   }
+
+  .bells {
+    padding-bottom: 30px;
+  }
   
   .bells .bar {
     background: var(--secondary);
     display: none;
+
+    &::before {
+      top: 100%;
+      left: 50%;
+      translate: -50% 0%;
+    }
   }
 
   .bells .bar:has( ~ .bar[data-value=8] ) {
