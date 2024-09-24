@@ -73,12 +73,22 @@
       }
 
       const impacted = roll.filter( x => x <= parameters.risk ).length;
+      const mixed = roll.some(x => x == 4 || x == 5);
       const success = roll.some( x => x == 6 );
       const crit = roll.filter( x => x == 6).length > 1;
 
-      const shouldCreate = (success && Math.random() <= parameters.success / 100) || (crit && Math.random() <= parameters.critsuccess / 100);
+      let max = roll.reduce( (max, die) => Math.max(max, die), 0) - 1;
+      if( crit ) max++;
+
+      const shouldCreate = (success && Math.random() <= parameters.success / 100) 
+        || (mixed && Math.random() <= parameters.mixed / 100) 
+        || (crit && Math.random() <= parameters.critsuccess / 100);
       const create = shouldCreate ? 1 : 0;
       const destroy = Math.floor( parameters.impacted / 100 * impacted );
+
+      const labels = ["Critical Failure", "Mixed Failure", "Mixed Failure", "Mixed Success", "Mixed Success", "Success", "Critical Success"];
+      const label = labels[max];
+
 
       after = before + create - destroy;
      
@@ -89,6 +99,7 @@
         },
         roll,
         results: {
+          label,
           impacted,
           success,
           crit
@@ -114,11 +125,10 @@
   const printRound = ( round ) => {
     const die = [ "one", "two", "three", "four", "five", "six" ];
     const roll = round.roll.map( value => `<i class="die fa-solid fa-dice-${die[ value - 1]} ${ value <= round.stats.risk ? "impacted" : ""}"></i>` ).join(' ');
-    return `<tr><td>${roll}</td><td>${round.response.create}</td><td>${round.response.destroy}</td><td>${round.resources.before} => ${round.resources.after}</td></tr>` 
+    return `<tr><td>${roll}</td><td>${round.results.label}</td><td>${round.response.create}</td><td>${round.response.destroy}</td><td>${round.resources.before} => ${round.resources.after}</td></tr>` 
   }
 
   const displayResults = ( results )  => {
-    console.log(results);
     const bars = document.querySelector(".js-bars");
 
     bars.innerHTML = "";
@@ -137,7 +147,7 @@
 
     const log = document.querySelector(".js-log");
     log.innerHTML = `
-      <th>Roll</th><th>Created</th><th>Destroyed</th><th>Change</th>
+      <th>Roll</th><th>Result</th><th>Created</th><th>Destroyed</th><th>Change</th>
       ${ results.map(printRound).join("\n") }
       `;
   }
@@ -428,6 +438,7 @@
       <summary>The DM</summary>
       <ul>
         <li><input name="risk" type="range" min="0" max="6" value="1" step="1" /> The risk level is <output></output>.</li>
+        <li><input name="mixed" type="range" min="0" max="100" value="75" step="1" /> Create a resource on a mixed (4/5) success <output></output>% of the time.</li>
         <li><input name="success" type="range" min="0" max="100" value="75" step="1" /> Create a resource on a success <output></output>% of the time.</li>
         <li><input name="critsuccess" type="range" min="0" max="100" value="100" step="1" /> Create a resource on a crit success <output></output>% of the time.</li>
         <li><input name="impacted" type="range" min="0" max="100" value="100" step="1" /> Destroy <output></output>% of impacted resources.</li>
