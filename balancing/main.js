@@ -72,8 +72,13 @@ const simulate = () => {
     const shouldCreate = (success && Math.random() <= parameters.success / 100) 
       || (mixed && Math.random() <= parameters.mixed / 100) 
       || (crit && Math.random() <= parameters.critsuccess / 100);
-    const create = shouldCreate ? 1 : 0;
+    let create = shouldCreate ? 1 : 0;
     const destroy = Math.floor( parameters.impacted / 100 * impacted );
+
+    const willpowerCreate = Math.random() <= parameters.create / 100;
+    const willpowerNumCreate = Math.floor(Math.random() * parameters.numcreate) + 1;
+    if( willpowerCreate )
+      create += willpowerNumCreate;
 
     const labels = ["Critical Failure", "Mixed Failure", "Mixed Failure", "Mixed Success", "Mixed Success", "Success", "Critical Success"];
     const label = labels[max];
@@ -85,6 +90,9 @@ const simulate = () => {
       stats: {
         used,
         risk: parameters.risk
+      },
+      willpower: {
+        create: willpowerCreate ? willpowerNumCreate : 0
       },
       roll,
       results: {
@@ -114,7 +122,7 @@ const simulate = () => {
 const printRound = ( round ) => {
   const die = [ "one", "two", "three", "four", "five", "six" ];
   const roll = round.roll.map( value => `<i class="die fa-solid fa-dice-${die[ value - 1]} ${ value <= round.stats.risk ? "impacted" : ""}"></i>` ).join(' ');
-  return `<tr><td>${roll}</td><td>${round.results.label}</td><td>${round.response.create}</td><td>${round.response.destroy}</td><td>${round.resources.before} => ${round.resources.after}</td></tr>` 
+  return `<tr><td>${roll}</td><td>${round.results.label}</td><td>${round.response.create} (${round.willpower.create})</td><td>${round.response.destroy}</td><td>${round.resources.before} => ${round.resources.after}</td></tr>` 
 }
 
 const displayResults = ( results )  => {
