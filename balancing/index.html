@@ -4,489 +4,85 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tiny.css@0/dist/tiny.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tiny.css@0/dist/tiny.css" />
+  <link rel="stylesheet" href="./styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="./main.js" ></script>
+
 </head>
-
-<script>
-
-  let parameters = {
-    communities: 8,
-    leaderPct: .5,
-  }
-
-  const updatePopulation = () => {
-    const leaders = document.querySelector(".js-leaders");
-    const people = document.querySelector(".js-people");
-
-    updateParameter("leaders", Math.floor(parameters.communities * parameters.leaderPct));
-    updateParameter("people", parameters.communities - parameters.leaders);
-    updateParameter("resources", parameters.leaders * parameters.leaderresources + parameters.people * parameters.peopleresources);
-
-    leaders.innerHTML = parameters.leaders;
-    people.innerHTML = parameters.people;
-  }
-
-  const updateParameter = (name, value) => {
-    parameters[name] = value;
-    saveParameters();
-  }
-
-  const gleanParameters = () => {
-    document.querySelectorAll("input").forEach(input => parameters[input.name] = input.value);
-  }
-
-  const saveParameters = () => {
-    localStorage.setItem("parameters", JSON.stringify(parameters) );
-  }
-
-  const loadParameters = () => {
-    try {
-      const loaded = localStorage.getItem("parameters");
-      if( loaded )
-        parameters = JSON.parse(loaded);
-      
-      for( var key in parameters ) {
-        const input = document.querySelector(`input[name="${key}"]`)
-        if( input )
-          input.value = parameters[key];
-      }
-
-    } catch(e) {
-      console.log("No save found, using default parameters.");
-    }
-
-    return false;
-  }
-
-  const simulate = () => {
-    // roll
-    const game = [];
-    let before = parameters.resources;
-    let after = parameters.resources;
-
-    for( let i = 0; i < parameters.rounds; i++ ) {
-      const roll = [];
-      const used = Math.min( parameters.action, before );
-      for( let d = 0; d < used; d++ ) {
-        const die = Math.floor( 1 + Math.random() * 6 );
-        roll.push(die);
-      }
-
-      const impacted = roll.filter( x => x <= parameters.risk ).length;
-      const mixed = roll.some(x => x == 4 || x == 5);
-      const success = roll.some( x => x == 6 );
-      const crit = roll.filter( x => x == 6).length > 1;
-
-      let max = roll.reduce( (max, die) => Math.max(max, die), 0) - 1;
-      if( crit ) max++;
-
-      const shouldCreate = (success && Math.random() <= parameters.success / 100) 
-        || (mixed && Math.random() <= parameters.mixed / 100) 
-        || (crit && Math.random() <= parameters.critsuccess / 100);
-      const create = shouldCreate ? 1 : 0;
-      const destroy = Math.floor( parameters.impacted / 100 * impacted );
-
-      const labels = ["Critical Failure", "Mixed Failure", "Mixed Failure", "Mixed Success", "Mixed Success", "Success", "Critical Success"];
-      const label = labels[max];
-
-
-      after = before + create - destroy;
-     
-      const round = {
-        stats: {
-          used,
-          risk: parameters.risk
-        },
-        roll,
-        results: {
-          label,
-          impacted,
-          success,
-          crit
-        },
-        response: {
-          create,
-          destroy
-        },
-        resources: {
-          before,
-          after
-        }
-      }
-
-      game.push( round );
-
-      before = after;
-    }
-
-    return game;
-  }
-
-  const printRound = ( round ) => {
-    const die = [ "one", "two", "three", "four", "five", "six" ];
-    const roll = round.roll.map( value => `<i class="die fa-solid fa-dice-${die[ value - 1]} ${ value <= round.stats.risk ? "impacted" : ""}"></i>` ).join(' ');
-    return `<tr><td>${roll}</td><td>${round.results.label}</td><td>${round.response.create}</td><td>${round.response.destroy}</td><td>${round.resources.before} => ${round.resources.after}</td></tr>` 
-  }
-
-  const displayResults = ( results )  => {
-    const bars = document.querySelector(".js-bars");
-
-    bars.innerHTML = "";
-
-    for (const round of results) {
-      const bar = document.createElement("div");
-      bar.classList.add("bar");
-      bar.style.setProperty("--value", round.resources.before);
-      bar.setAttribute("data-value", round.resources.before);
-
-      bars.appendChild(bar);
-    }
-
-    const maxResources = results.reduce((acc, cur) => Math.max(acc, cur.resources.before), 0);
-    bars.style.setProperty("--max", maxResources);
-
-    const log = document.querySelector(".js-log");
-    log.innerHTML = `
-      <th>Roll</th><th>Result</th><th>Created</th><th>Destroyed</th><th>Change</th>
-      ${ results.map(printRound).join("\n") }
-      `;
-  }
-
-  const displayDistribution = (games) => {
-    const bell = document.querySelector(".js-bell");
-
-    bell.innerHTML = "";
-    const histogram = games.reduce( (acc, cur) => {
-      const end = cur.at(-1);
-      const create = cur.reduce( (acc, cur) => acc + cur.response.create, 0);
-      const destroy = cur.reduce((acc, cur) => acc + cur.response.destroy, 0);
-
-      acc.total[end.resources.after] = acc.total[end.resources.after] + 1 || 1;
-      acc.created[create] = acc.created[create] + 1 || 1;
-      acc.destroyed[destroy] = acc.destroyed[destroy] + 1 || 1;
-
-      return acc;
-    }, {
-      total: {},
-      created: {},
-      destroyed: {}
-    })
-
-    const ranges = {};
-
-    for( var key in histogram ) {
-
-      const min = Math.min(...Object.keys(histogram[key]));
-      const max = Math.max(...Object.keys(histogram[key]));
-      const range = Math.max(...Object.values(histogram[key]));
-    
-      bell.style.setProperty(`--max-${key}`, range);
-
-      ranges[key] = { min, max, range };
-    }
-
-    for( var key in histogram ) {
-      const data = histogram[key];
-      const {min, max} = ranges[key];
-
-      for (let i = min; i <= max; i++) {
-        const bar = document.createElement("div");
-        bar.classList.add("bar");
-        bar.classList.add(`bar-${key}`);
-        bar.style.setProperty("--value", data[i]);
-        bar.setAttribute("data-value", i);
-
-        bell.appendChild(bar);
-      } 
-    }
-
-  }
-
-  window.addEventListener("DOMContentLoaded", () => {
-    loadParameters();
-
-    document.querySelectorAll("input").forEach(input => {
-      const output = input.closest("li").querySelector("output");
-      const update = () => {
-        updateParameter(input.name, input.value);
-        if (output) output.value = input.value;
-      }
-
-      input.addEventListener("input", () => { 
-        update();
-        updatePopulation();
-      });
-
-      update();
-    });
-
-    document.querySelectorAll(".js-view").forEach(link => 
-      link.addEventListener("click", () => {
-        const bell = document.querySelector(".js-bell");
-        bell.classList.remove("total", "created", "destroyed");
-        bell.classList.add(link.dataset.type);
-      })
-    )
-
-
-    const run = () => {
-      const games = [];
-      for (let i = 0; i < parameters.games; i++) {
-        games.push(simulate());
-      }
-
-      displayResults(games.at(-1));
-      displayDistribution(games);
-            
-    }
-
-    updatePopulation();
-
-    document.querySelector("button").addEventListener("click", run);
-    run();
-    
-  })
-
-</script>
-  
-
-<style>
-  :root{
-    --accent: #3498db;
-    --secondary: #9b59b6;
-    --positive: #2ecc71;
-    --negative: #e74c3c;
-  }
-
-  .bars {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: end;;
-    gap: 5px;
-    width: 100%;
-    box-sizing: border-box;
-    height: 20vh;
-    border: 2px solid var(--background-hover);
-    padding: 16px;
-    padding-bottom: 0px;
-    border-radius: 8px;
-  }
-
-  .bar {
-    height: calc( var(--value) / var(--max) * 90% );
-    /* width: 20px; */
-    flex: 1 1 100%;
-    
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    background: var(--accent);
-    position: relative;
-
-    &::before {
-      position: absolute;
-      content: attr(data-value);
-      top: 0px;
-      left: 50%;
-      translate: -50% -100%;
-      font-size: 16px;
-      font-family: sans-serif;
-    }
-  }
-
-
-  input {
-    display: inline-block !important;
-    /* width: 100px !important; */
-  }
-
-  ul {
-    padding: 0px;
-  }
-
-  li {
-    list-style: none;
-    margin: 0px;;
-  }
-
-  pre {
-    font-size: 24px;
-  }
-
-  .die {
-    color: white;
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    font-size: 2em;
-    padding: 2px;
-    font-weight: bold;
-    border-radius: 3px;
-  }
-
-  .die.fa-dice-six {
-    color: var(--positive);
-  }
-
-  .die.impacted {
-    color: var(--negative);
-  }
-
-  body {
-    margin: 0px;
-    padding: 16px;
-    max-width: unset;
-  }
-
-  main {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    gap: 16px;
-  }
-
-  aside {
-    flex-grow: 1;
-    min-width: min(100%, max-content);
-  }
-
-  section {
-    flex-grow: 5;
-    min-width: min(100%, 500px);
-    box-sizing: border-box;
-  }
-
-
-  li {
-    display: block;
-  }
-
-  .bells {
-    padding-bottom: 30px;
-  }
-  
-  .bells .bar {
-    background: var(--secondary);
-    display: none;
-
-    &::before {
-      top: 100%;
-      left: 50%;
-      translate: -50% 0%;
-    }
-  }
-
-  .bells .bar:has( ~ .bar[data-value=8] ) {
-    opacity: .5;
-  }
-
-  .bells.total {
-    --max: var(--max-total);
-  }
-
-  .bells.created {
-    --max: var(--max-created);
-  }
-
-
-  .bells.destroyed {
-    --max: var(--max-destroyed);
-  }
-
-  .bells.total .bar.bar-total {
-    display: block;
-  }
-
-  .bells.created .bar.bar-created {
-    display: block;
-    background: var(--positive);
-  }
-
-  .bells.destroyed .bar.bar-destroyed {
-    display: block;
-    background: var(--negative);
-  }
-
-  .js-view {
-    cursor: pointer;
-  }
-
-  .js-view[data-type="total"] {
-    color: var(--secondary);
-  }
-
-  .js-view[data-type="created"] {
-    color: var(--positive);
-  }
-
-  .js-view[data-type="destroyed"] {
-    color: var(--negative);
-  }
-
-</style>
 
 <body>
   <h1>SpOp Resource Balancing</h1>
-  
+
   <main>
-    
 
-  <aside>
-    <h3>Settings</h3>
-    <details open>
-      <summary>The Society</summary>
+    <aside>
+      <h3>Settings</h3>
+      <details open>
+        <summary>The Society</summary>
+        <ul>
+          <li><input name="communities" type="range" min="3" max="10" value="8" /> There are <output></output>
+            communities.</li>
+          <li><input name="leaderPct" type="range" min="0" max="1" value=".4" step=".1" /> There are <span
+              class="js-leaders">XX</span> Leaders (and <span class="js-people">XX</span> People).</li>
+          <li><input name="leaderresources" type="range" min="1" max="5" value="2" step="1" /> Leaders start with
+            <output></output> resources.</li>
+          <li><input name="peopleresources" type="range" min="1" max="5" value="1" step="1" /> People start with
+            <output></output> resources.</li>
+          <li><input name="action" type="range" min="1" max="10" value="3" step="1" /> The society does its actions with
+            <output></output> resources.</li>
+        </ul>
+      </details>
 
-      <ul>
-        <li><input name="communities" type="range" min="3" max="10" value="8"/> There are <output></output> communities.</li>
-        <li><input name="leaderPct" type="range" min="0" max="1" value=".4" step=".1"/> There are <span class="js-leaders">XX</span> Leaders (and <span class="js-people">XX</span> People).</li>
-        <li><input name="leaderresources" type="range" min="1" max="5" value="2" step="1"/> Leaders start with <output></output> resources.</li>
-        <li><input name="peopleresources" type="range" min="1" max="5" value="1" step="1" /> People start with <output></output> resources.</li>
-        <li><input name="action" type="range" min="1" max="10" value="3" step="1" /> The society does its actions with <output></output> resources.</li>
-      </ul>
-    </details>
-
-    <details open>
-      <summary>The DM</summary>
-      <ul>
-        <li><input name="risk" type="range" min="0" max="6" value="1" step="1" /> The risk level is <output></output>.</li>
-        <li><input name="mixed" type="range" min="0" max="100" value="5" step="1" /> Create a resource on a mixed (4/5) success <output></output>% of the time.</li>
-        <li><input name="success" type="range" min="0" max="100" value="50" step="1" /> Create a resource on a success <output></output>% of the time.</li>
-        <li><input name="critsuccess" type="range" min="0" max="100" value="100" step="1" /> Create a resource on a crit success <output></output>% of the time.</li>
-        <li><input name="impacted" type="range" min="0" max="100" value="100" step="1" /> Destroy <output></output>% of impacted resources.</li>
-      </ul>
-    </details>
-
-
-  <details open>
-    <summary>Let's Go</summary>
-
-    <ul>
-      <li><input name="rounds" type="range" min="1" max="20" value="3" step="1" /> Simulate <output></output> rounds.</li>
-      <li><input name="games" type="range" min="1" max="10000" value="500" step="1" /> Simulate <output></output> games.</li>
-    </ul>
-  </details>
-
-    <button>Simulate!</button>
-  </aside>
-
-  <section>
-    <h3>Game End Distributions: <a class="js-view" data-type="total">Total</a> &middot; <a class="js-view" data-type="created">Created</a> &middot; <a class="js-view" data-type="destroyed">Destroyed</a></h3>
-    <div class="bars bells total js-bell">
-    
-    </div>
-
-    <h3>Single Game (Resources)</h3>
-    <div class="bars js-bars">
-
-    </div>
+      <details open>
+        <summary>The DM</summary>
+        <ul>
+          <li><input name="risk" type="range" min="0" max="6" value="1" step="1" /> The risk level is <output></output>.
+          </li>
+          <li><input name="mixed" type="range" min="0" max="100" value="5" step="1" /> Create a resource on a mixed
+            (4/5) success <output></output>% of the time.</li>
+          <li><input name="success" type="range" min="0" max="100" value="50" step="1" /> Create a resource on a success
+            <output></output>% of the time.</li>
+          <li><input name="critsuccess" type="range" min="0" max="100" value="100" step="1" /> Create a resource on a
+            crit success <output></output>% of the time.</li>
+          <li><input name="impacted" type="range" min="0" max="100" value="100" step="1" /> Destroy <output></output>%
+            of impacted resources.</li>
+        </ul>
+      </details>
 
 
-    <h3>Single Game (Rounds)</h3>
-    <table class="js-log">
+      <details open>
+        <summary>Let's Go</summary>
 
-    </table>
-  </section>
+        <ul>
+          <li><input name="rounds" type="range" min="1" max="20" value="3" step="1" /> Simulate <output></output>
+            rounds.</li>
+          <li><input name="games" type="range" min="1" max="10000" value="500" step="1" /> Simulate <output></output>
+            games.</li>
+        </ul>
+      </details>
+
+      <button>Simulate!</button>
+    </aside>
+
+    <section>
+      <h3>Game End Distributions: <a class="js-view" data-type="total">Total</a> &middot; <a class="js-view"
+          data-type="created">Created</a> &middot; <a class="js-view" data-type="destroyed">Destroyed</a></h3>
+      <div class="bars bells total js-bell">
+
+      </div>
+
+      <h3>Single Game (Resources)</h3>
+      <div class="bars js-bars">
+
+      </div>
+
+
+      <h3>Single Game (Rounds)</h3>
+      <table class="js-log">
+
+      </table>
+    </section>
 
 
   </main>
