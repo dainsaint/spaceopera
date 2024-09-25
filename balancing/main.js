@@ -81,7 +81,7 @@ const simulate = () => {
       create += willpowerNumCreate;
 
     const labels = ["Critical Failure", "Mixed Failure", "Mixed Failure", "Mixed Success", "Mixed Success", "Success", "Critical Success"];
-    const label = labels[max];
+    const label = labels[max] || "No Resources";
 
 
     after = before + create - destroy;
@@ -153,45 +153,67 @@ const displayDistribution = (games) => {
   const bell = document.querySelector(".js-bell");
 
   bell.innerHTML = "";
-  const histogram = games.reduce( (acc, cur) => {
-    const end = cur.at(-1);
-    const create = cur.reduce( (acc, cur) => acc + cur.response.create, 0);
-    const destroy = cur.reduce((acc, cur) => acc + cur.response.destroy, 0);
+  const histogram = games.reduce(
+    (acc, cur) => {
+      const end = cur.at(-1);
+      const create = cur.reduce((acc, cur) => acc + cur.response.create, 0);
+      const destroy = cur.reduce((acc, cur) => acc + cur.response.destroy, 0);
+      const outcomes = cur.reduce((acca, cur) => {
+        acca[cur.results.label] = acca[cur.results.label] + 1 || 1;
+        return acca;
+      }, {});
 
-    acc.total[end.resources.after] = acc.total[end.resources.after] + 1 || 1;
-    acc.created[create] = acc.created[create] + 1 || 1;
-    acc.destroyed[destroy] = acc.destroyed[destroy] + 1 || 1;
-
-    return acc;
-  }, {
-    total: {},
-    created: {},
-    destroyed: {}
-  })
+      acc.total[end.resources.after] = acc.total[end.resources.after] + 1 || 1;
+      acc.created[create] = acc.created[create] + 1 || 1;
+      acc.destroyed[destroy] = acc.destroyed[destroy] + 1 || 1;
+      Object.entries(outcomes).forEach(([label, count]) => {
+        acc.outcomes[label] = acc.outcomes[label] + count || count;
+      });
+      return acc;
+    },
+    {
+      total: {},
+      created: {},
+      destroyed: {},
+      outcomes: {
+        "Critical Failure": 0,
+        "Mixed Failure": 0,
+        "Mixed Success": 0,
+        "Success": 0,
+        "Critical Success": 0
+      },
+    }
+  );
 
   const ranges = {};
 
+  console.log( histogram );
+
   for( var key in histogram ) {
 
-    const min = Math.min(...Object.keys(histogram[key]));
-    const max = Math.max(...Object.keys(histogram[key]));
+    const min = Math.min(...Object.keys(histogram[key])) || 0;
+    const max = Math.max(...Object.keys(histogram[key])) || Object.keys(histogram[key]).length - 1;
     const range = Math.max(...Object.values(histogram[key]));
-  
+
     bell.style.setProperty(`--max-${key}`, range);
 
     ranges[key] = { min, max, range };
   }
 
   for( var key in histogram ) {
+    
     const data = histogram[key];
+    const keys = Object.keys(data);
+    console.log( keys );
     const {min, max} = ranges[key];
 
-    for (let i = min; i <= max; i++) {
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
       const bar = document.createElement("div");
       bar.classList.add("bar");
       bar.classList.add(`bar-${key}`);
-      bar.style.setProperty("--value", data[i]);
-      bar.setAttribute("data-value", i);
+      bar.style.setProperty("--value", data[k]);
+      bar.setAttribute("data-value", k);
 
       bell.appendChild(bar);
     } 
@@ -220,7 +242,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".js-view").forEach(link => 
     link.addEventListener("click", () => {
       const bell = document.querySelector(".js-bell");
-      bell.classList.remove("total", "created", "destroyed");
+      bell.classList.remove("total", "created", "destroyed", "outcomes");
       bell.classList.add(link.dataset.type);
     })
   )

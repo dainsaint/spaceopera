@@ -3,6 +3,7 @@
   --secondary: #9b59b6;
   --positive: #2ecc71;
   --negative: #e74c3c;
+  --outcomes: #f39c12;
   /* Colors from flatuicolors https://flatuicolors.com/palette/defo */
 }
 
@@ -35,6 +36,11 @@
   &::before {
     position: absolute;
     content: attr(data-value);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
+    width: 100%;
     top: 0px;
     left: 50%;
     translate: -50% -100%;
@@ -144,6 +150,10 @@ li {
   --max: var(--max-destroyed);
 }
 
+.bells.outcomes {
+  --max: var(--max-outcomes);
+}
+
 .bells.total .bar.bar-total {
   display: block;
 }
@@ -156,6 +166,11 @@ li {
 .bells.destroyed .bar.bar-destroyed {
   display: block;
   background: var(--negative);
+}
+
+.bells.outcomes .bar.bar-outcomes {
+  display: block;
+  background: var(--outcomes);
 }
 
 .js-view {
@@ -196,6 +211,15 @@ li {
   --color: var(--negative);
 
   section:has(.destroyed) & {
+    background: var(--color);
+    color: white;
+  }
+}
+
+.js-view[data-type="outcomes"] {
+  --color: var(--outcomes);
+
+  section:has(.outcomes) & {
     background: var(--color);
     color: white;
   }
