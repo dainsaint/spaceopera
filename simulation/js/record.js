@@ -1,16 +1,19 @@
 export default class Record {
   static ledger = [{}];
+  static terminal = [];
 
   constructor() {
     this.ledger = [{}];
   }
 
   static log(...data) {
+    this.terminal.push( data.join(" ") );
     // console.log(...data);
   }
 
   static reset() {
     this.ledger = [{}];
+    this.terminal = [];
   }
 
   static newRound() {

@@ -4,6 +4,7 @@
   --positive: #2ecc71;
   --negative: #e74c3c;
   --outcomes: #f39c12;
+  --lost: #34495e;
   /* Colors from flatuicolors https://flatuicolors.com/palette/defo */
 }
 
@@ -145,13 +146,16 @@ li {
   --max: var(--max-created);
 }
 
-
 .bells.destroyed {
   --max: var(--max-destroyed);
 }
 
 .bells.outcomes {
   --max: var(--max-outcomes);
+}
+
+.bells.lost {
+  --max: var(--max-lost);
 }
 
 .bells.total .bar.bar-total {
@@ -171,6 +175,11 @@ li {
 .bells.outcomes .bar.bar-outcomes {
   display: block;
   background: var(--outcomes);
+}
+
+.bells.lost .bar.bar-lost {
+  display: block;
+  background: var(--lost);
 }
 
 .js-view {
@@ -220,6 +229,15 @@ li {
   --color: var(--outcomes);
 
   section:has(.outcomes) & {
+    background: var(--color);
+    color: white;
+  }
+}
+
+.js-view[data-type="lost"] {
+  --color: var(--lost);
+
+  section:has(.lost) & {
     background: var(--color);
     color: white;
   }

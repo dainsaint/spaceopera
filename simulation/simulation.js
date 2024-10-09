@@ -112,13 +112,16 @@ export default function simulate() {
   }
 
   for (let i = 0; i < 5; i++) {
-    Record.log(`===ROUND ${i + 1}===`);
+    Record.log(`ROUND ${i + 1}`);
     round(i);
   }
 
-  Record.log(society);
-  Record.log(deck);
+  // Record.log(society);
+  // Record.log(deck);
 
-  return Record.ledger.slice(1);
+  return {
+    rounds: Record.ledger.slice(1),
+    log: Record.terminal
+  }
 }
 
