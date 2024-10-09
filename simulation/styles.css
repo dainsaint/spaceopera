@@ -1,0 +1,226 @@
+:root {
+  --accent: #3498db;
+  --secondary: #9b59b6;
+  --positive: #2ecc71;
+  --negative: #e74c3c;
+  --outcomes: #f39c12;
+  /* Colors from flatuicolors https://flatuicolors.com/palette/defo */
+}
+
+.bars {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: end;
+  ;
+  gap: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  height: 20vh;
+  border: 2px solid var(--background-hover);
+  padding: 16px;
+  padding-bottom: 0px;
+  border-radius: 8px;
+}
+
+.bar {
+  height: calc(var(--value) / var(--max) * 90%);
+  /* width: 20px; */
+  flex: 1 1 100%;
+
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  background: var(--accent);
+  position: relative;
+
+  &::before {
+    position: absolute;
+    content: attr(data-value);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
+    width: 100%;
+    top: 0px;
+    left: 50%;
+    translate: -50% -100%;
+    font-size: 16px;
+    font-family: sans-serif;
+  }
+}
+
+
+input {
+  display: inline-block !important;
+  /* width: 100px !important; */
+}
+
+ul {
+  padding: 0px;
+}
+
+li {
+  list-style: none;
+  margin: 0px;
+  ;
+}
+
+pre {
+  font-size: 24px;
+}
+
+.die {
+  color: white;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  font-size: 2em;
+  padding: 2px;
+  font-weight: bold;
+  border-radius: 3px;
+}
+
+.die.fa-dice-six {
+  color: var(--positive);
+}
+
+.die.impacted {
+  color: var(--negative);
+}
+
+body {
+  margin: 0px;
+  padding: 16px;
+  max-width: unset;
+}
+
+main {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 16px;
+}
+
+aside {
+  flex-grow: 1;
+  min-width: min(100%, max-content);
+}
+
+section {
+  flex-grow: 5;
+  min-width: min(100%, 500px);
+  box-sizing: border-box;
+}
+
+
+li {
+  display: block;
+}
+
+.bells {
+  padding-bottom: 30px;
+}
+
+.bells .bar {
+  background: var(--secondary);
+  display: none;
+
+  &::before {
+    top: 100%;
+    left: 50%;
+    translate: -50% 0%;
+  }
+}
+
+.bells .bar:has(~ .bar[data-value=8]) {
+  opacity: .5;
+}
+
+.bells.total {
+  --max: var(--max-total);
+}
+
+.bells.created {
+  --max: var(--max-created);
+}
+
+
+.bells.destroyed {
+  --max: var(--max-destroyed);
+}
+
+.bells.outcomes {
+  --max: var(--max-outcomes);
+}
+
+.bells.total .bar.bar-total {
+  display: block;
+}
+
+.bells.created .bar.bar-created {
+  display: block;
+  background: var(--positive);
+}
+
+.bells.destroyed .bar.bar-destroyed {
+  display: block;
+  background: var(--negative);
+}
+
+.bells.outcomes .bar.bar-outcomes {
+  display: block;
+  background: var(--outcomes);
+}
+
+.js-view {
+  cursor: pointer;
+}
+
+
+.js-view {
+  color: var(--color);
+  padding: 5px;
+  border-radius: 3px;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--button-hover);
+  }
+}
+
+.js-view[data-type="total"] {
+  --color: var(--secondary);
+
+  section:has(.total) & {
+    background: var(--color);
+    color: var(--text-main);
+  }
+}
+
+.js-view[data-type="created"] {
+  --color: var(--positive);
+
+  section:has(.created) & {
+    background: var(--color);
+    color: white;
+  }
+}
+
+.js-view[data-type="destroyed"] {
+  --color: var(--negative);
+
+  section:has(.destroyed) & {
+    background: var(--color);
+    color: white;
+  }
+}
+
+.js-view[data-type="outcomes"] {
+  --color: var(--outcomes);
+
+  section:has(.outcomes) & {
+    background: var(--color);
+    color: white;
+  }
+}

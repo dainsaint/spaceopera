@@ -1,0 +1,114 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tiny.css@0/dist/tiny.css" />
+  <link rel="stylesheet" href="./styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script type="module" src="./main.js" ></script>
+
+</head>
+
+<body>
+  <h1>SpOp Resource Balancing</h1>
+
+  <main>
+
+    <aside>
+      <h3>Settings</h3>
+      <details open>
+        <summary>The Society</summary>
+        <ul>
+          <li><input name="communities" type="range" min="3" max="10" value="8" /> There are <output></output>
+            communities.</li>
+          <li><input name="leaderPct" type="range" min="0" max="1" value=".4" step=".1" /> There are <span
+              class="js-leaders">XX</span> Leaders (and <span class="js-people">XX</span> People).</li>
+          <li><input name="leaderresources" type="range" min="1" max="5" value="2" step="1" /> Leaders start with
+            <output></output> resources.
+          </li>
+          <li><input name="peopleresources" type="range" min="1" max="5" value="1" step="1" /> People start with
+            <output></output> resources.
+          </li>
+          <li><input name="action" type="range" min="1" max="10" value="3" step="1" /> The society does its actions with
+            <output></output> resources.
+          </li>
+
+        </ul>
+      </details>
+
+
+      <details open>
+        <summary>Willpower</summary>
+        <ul>
+          <li><input name="create" type="range" min="0" max="100" value="10" step="1" /> Use willpower to create
+            resources in
+            <output></output>% of rounds.
+          </li>
+          <li><input name="numcreate" type="range" min="0" max="4" value="1" step="1" /> Use willpower to create up to
+            <output></output>
+            resources when applicable.
+          </li>
+        </ul>
+      </details>
+
+
+      <details open>
+        <summary>The DM</summary>
+        <ul>
+          <li><input name="risk" type="range" min="0" max="6" value="1" step="1" /> The risk level is <output></output>.
+          </li>
+          <li><input name="mixed" type="range" min="0" max="100" value="5" step="1" /> Create a resource on a mixed
+            (4/5) success <output></output>% of the time.</li>
+          <li><input name="success" type="range" min="0" max="100" value="50" step="1" /> Create a resource on a success
+            <output></output>% of the time.
+          </li>
+          <li><input name="critsuccess" type="range" min="0" max="100" value="100" step="1" /> Create a resource on a
+            crit success <output></output>% of the time.</li>
+          <li><input name="impacted" type="range" min="0" max="100" value="100" step="1" /> Destroy <output></output>%
+            of impacted resources.</li>
+        </ul>
+      </details>
+
+
+      <details open>
+        <summary>Let's Go</summary>
+
+        <ul>
+          <li><input name="rounds" type="range" min="1" max="20" value="3" step="1" /> Simulate <output></output>
+            rounds.</li>
+          <li><input name="games" type="range" min="1" max="10000" value="500" step="1" /> Simulate <output></output>
+            games.</li>
+        </ul>
+      </details>
+
+      <button>Simulate!</button>
+    </aside>
+
+    <section>
+      <h3>Game End Distributions: <a class="js-view" data-type="total">Total</a> &middot; <a class="js-view"
+          data-type="created">Created</a> &middot; <a class="js-view" data-type="destroyed">Destroyed</a> &middot; <a
+          class="js-view" data-type="outcomes">Outcomes</a></h3>
+      <div class="bars bells total js-bell">
+
+      </div>
+
+      <h3>Single Game (Resources)</h3>
+      <div class="bars js-bars">
+
+      </div>
+
+
+      <h3>Single Game (Rounds)</h3>
+      <table class="js-log">
+
+      </table>
+    </section>
+
+
+  </main>
+</body>
+
+
+</html>
