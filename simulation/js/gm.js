@@ -58,7 +58,7 @@ export default class GM {
 
   smite( society ) {
     const numberToSmite = range(0, 4);
-    const playersToSmite = shuffle( society.players.filter( x => x.community.resources.length ) ).slice(0, numberToSmite);
+    const playersToSmite = shuffle( society.players.filter( x => x.resources.length ) ).slice(0, numberToSmite);
     
     if( !playersToSmite.length )
       return;

@@ -16,7 +16,7 @@ export default function simulate() {
   function round(roundNumber) {
     Record.newRound();
 
-    Record.set(`resources`, society.totalResources);
+    Record.set(`resources`, society.numResources);
 
     // Universal Phase
     if (roundNumber > 0) {
@@ -27,21 +27,11 @@ export default function simulate() {
     society.cycleResources();
 
     const endangeredAtTop = society.players.filter(
-      (player) => player.community.isEndangered
-    );
-
-    const totalResources = society.players.reduce(
-      (total, player) => total + player.community.intactResources.length,
-      0
-    );
-
-    const availableResources = society.players.reduce(
-      (total, player) => total + player.community.availableResources.length,
-      0
+      (player) => player.isEndangered
     );
 
     Record.log(
-      `${society.name} has ${totalResources} resources; ${availableResources} are not exhausted`
+      `${society.name} has ${society.numIntactResources} resources; ${society.numAvailableResources} are not exhausted`
     );
     society.deliberate();
 
@@ -52,16 +42,20 @@ export default function simulate() {
     let actionsToTake = roundNumber == 0 ? 1 : 2;
 
     const actions = [];
+    const societyActions = [];
 
-    for (let i = 0; i < actionsToTake; i++) {
-      const { log, resources } = society.takeAction();
+    for (let i = 0; i < actionsToTake; i++) 
+      societyActions.push(society.takeAction());
+
+    for (let i = 0; i < societyActions.length; i++) {
+      const { log, resources } = societyActions[i];
 
       Record.log(`🌟 Action ${i + 1}: ` + log);
 
       const roll = society.roll(resources);
       Record.log(`🎲 ${emissary.name} rolls ${roll.length}d6: `, roll);
 
-      const risk = 1;
+      const risk = society.risk;
       const result = gm.resolveRoll(roll, risk);
       // Record.log( result );
 
@@ -91,7 +85,7 @@ export default function simulate() {
     // Record.log( outcome );
 
     const endangeredAtBottom = society.players.filter(
-      (player) => player.community.isEndangered
+      (player) => player.isEndangered
     );
 
     const toDestroy = endangeredAtTop.filter((player) =>
@@ -99,7 +93,7 @@ export default function simulate() {
     );
 
     if (toDestroy.length) {
-      const communities = toDestroy.map((x) => x.community);
+      const communities = toDestroy.map((x) => ({name: x.community}));
       Record.log(`💀 ${printNames(communities)} die`);
       Record.increase("communities_lost", communities.length);
       toDestroy.forEach((player) => player.rollNewCommunity());

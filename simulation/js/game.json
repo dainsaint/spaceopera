@@ -1,0 +1,75 @@
+{
+  "deck": {
+    "name": "Willpower",
+    "properties": {
+      "exhausted": ["exhausted", "not exhausted"]
+    },
+    "types": [
+      {
+        "name": "Create",
+        "count": 10,
+        "conditions": [
+          {
+            "type": "inventory",
+            "value": {
+              "operation": "<"
+            }
+          }
+        ],
+        "actions": [
+
+        ]
+      }
+    ]
+  }
+}
+
+
+
+{
+  "deck": {
+    "name": "Uno",
+    "properties": {
+      "value": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "skip", "reverse", "draw-2", "draw-4", "wild"],
+      "color": ["red", "yellow", "blue", "green", "wild"]
+    },
+    "types": [
+      {
+        "name": "Red 0",
+        "count": 1,
+        "properties": [{
+          "type": "value",
+          "value": 0
+        }, {
+          "type": "color",
+          "value": "red"
+        }]
+      },
+  
+      {
+        "name": "Blue Reverse",
+        "count": 2,
+        "properties": [{
+          "type": "value",
+          "value": "reverse"
+        }, {
+          "type": "color",
+          "value": "blue"
+        }]
+      },
+    
+      {
+        "name": "Wild Draw 4",
+        "count": 4,
+        "properties": [{
+          "type": "value",
+          "value": "draw-4"
+        }, {
+          "type": "color",
+          "value": "wild"
+        }]
+      }
+    ]
+  }
+    
+}

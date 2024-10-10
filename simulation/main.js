@@ -1,3 +1,4 @@
+import Record from "./js/record.js";
 import simulate from "./simulation.js";
 
 // let parameters = {
@@ -234,6 +235,8 @@ const displayDistribution = (games) => {
 
 }
 
+/*
+
 window.addEventListener("DOMContentLoaded", () => {
   // loadParameters();
 
@@ -321,3 +324,8 @@ window.addEventListener("DOMContentLoaded", () => {
   run();
 })
 
+*/
+
+
+Record.debug = true;
+simulate();

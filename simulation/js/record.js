@@ -1,6 +1,7 @@
 export default class Record {
   static ledger = [{}];
   static terminal = [];
+  static debug = false;
 
   constructor() {
     this.ledger = [{}];
@@ -8,7 +9,8 @@ export default class Record {
 
   static log(...data) {
     this.terminal.push( data.join(" ") );
-    // console.log(...data);
+    if( Record.debug )
+      console.log(...data);
   }
 
   static reset() {

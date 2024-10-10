@@ -1,28 +1,36 @@
 import Card from "../cards/card.js";
+import Resource from "../resource.js";
+
+//Discard any other Willpower card and
+//exhaust any one resource to 
+//create a new resource for your community. 
+//Discard this card. 
 
 export default class CreateCard extends Card {
   name = "🌱 Create";
 
   setParameters() {
-    this.minimumResources = 1;
-    this.minimumWillpower = 2;
+    this.costResources = 1;
+    this.costWillpower = 2;
+    this.tags = Card.Tags.CreatesResources | Card.Tags.BurnsWillpower | Card.Tags.ExhaustsResources;
   }
 
-  evaluate(player, others) {
-    others = others.filter((other) => other != player);
 
-    const card = others.find((other) => other.askForWillpower(player));
-    console.log(card);
+  play(player, society) {
+    super.play(player, society);
 
-    // //can i use?
+    const willpower = player.rateWillpower( player.willpower );
+    const worstCard = willpower.at(-1);
+    player.discardWillpower(worstCard);
 
-    // const withHelp =
-    //   others.map( player => player.availableResources ).flat().length > 0
-    //   && others.map( player => player.willpower ).flat().length > 0;
+    const resource = player.availableResources.at(0);
+    resource.exhaust();
 
-    // return {
-    //   now,
-    //   withHelp
-    // }
+    const createdResource = new Resource();
+
+    console.log( `${player.name} creates ${createdResource.name}`)
+
+    player.addResource( createdResource );
   }
+
 }

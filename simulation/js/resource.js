@@ -6,7 +6,7 @@ export default class Resource {
   isUsed = false;
   isExhausted = false;
   isDestroyed = false;
-  transformCount = 0;
+  isTransformed = false;
 
   constructor() {
     this.name = getName("resource");
@@ -27,24 +27,23 @@ export default class Resource {
   }
 
   cycle() {
-    if( this.isExhausted )
-      this.isExhausted = false;
+    if (this.isExhausted) this.isExhausted = false;
 
-    if( this.isUsed ) {
+    if (this.isUsed) {
       this.isExhausted = true;
       this.isUsed = false;
     }
-    
   }
 
   transform() {
-    this.transformCount++;
+    this.isTransformed = true;
     const newName = transformName(this.name, "resource");
     Record.log(`${this.name} is now ${newName}`);
     this.name = newName;
 
     Record.increase("resources_transformed");
   }
+
 
   get isAvailable() {
     return !(this.isExhausted || this.isDestroyed || this.isUsed);

@@ -8,6 +8,7 @@ export default class Community {
   state = {
     gained: 0,
     destroyed: 0,
+    lost: 0,
     total: 0,
     endangered: false,
   };
@@ -27,6 +28,17 @@ export default class Community {
   addResource(resource) {
     this.resources.push(resource);
     this.state.gained++;
+  }
+
+  takeResource() {
+    const intact = this.intactResources;
+    if( !intact.length )
+      return null;
+
+    const resource = intact.pop();
+    this.resources.splice( this.resources.indexOf(resource), 1);
+    this.state.lost++;
+    return resource;
   }
 
   update() {

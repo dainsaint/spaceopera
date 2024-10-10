@@ -19,15 +19,16 @@ const wouldDonateResource = new SentimentRange(
 export default class Society {
   name;
   players;
+  risk = 1;
 
   constructor(numPlayers, numLeaders) {
     this.name = getName("society");
     this.players = [];
 
     for (let i = 0; i < numPlayers; i++) {
-      let player = new Player();
+      let player = new Player(this);
       while (this.players.find((x) => x.name == player.name)) {
-        player = new Player();
+        player = new Player(this);
       }
 
       if (numLeaders-- > 0) player.voice = Voice.Leader;
@@ -39,13 +40,13 @@ export default class Society {
 
   deliberate() {
     // deal with communities at risk
-    const endangeredPlayers = this.players.filter( player => player.community.isEndangered );
+    const endangeredPlayers = this.players.filter( player => player.isEndangered );
 
     if( endangeredPlayers.length ) {
       Record.log( `‼️ ${ printNames(endangeredPlayers) } endangered` );
       // get players with more than one resource who would donate
       const potentialDonors = this.players.filter( player => 
-        player.community.resources.length > 1
+        player.resources.length > 1
         && ( wouldDonateResource.rate(player.sentiment) > 1 )
       )
 
@@ -56,11 +57,11 @@ export default class Society {
           const donor = potentialDonors.at( j );
           const receiver = endangeredPlayers[i];
 
-          const resource = donor.community.resources.pop();
-          receiver.community.addResource(resource);
+          const resource = donor.resources.pop();
+          receiver.addResource(resource);
           Record.log(`🫱 ${donor.name} gives ${resource.name} to ${receiver.name}`)
 
-          if( donor.community.resources.length == 1)
+          if( donor.resources.length == 1)
             potentialDonors.splice(j, 1);
 
           if( potentialDonors.length == 0 )
@@ -94,7 +95,7 @@ export default class Society {
     const availableResources = shuffle(
       this.players
         .map((player) =>
-          player.community.resources.filter((resource) => resource.isAvailable)
+          player.resources.filter((resource) => resource.isAvailable)
         )
         .flat()
     );
@@ -126,19 +127,46 @@ export default class Society {
     return result;
   }
 
+  increaseRisk() {
+    this.risk++;
+    Record.log(`${this.name} risk level is now ${this.risk}`);
+  }
+
   update(outcome) {
     for( const player of this.players ) {
       player.update(outcome);
     }
+
+    this.risk = 1;
   }
 
   cycleResources() {
-    const resources = this.players.map( player => player.community.resources ).flat();
-    resources.forEach((resource) => resource.cycle());
+    const allResources = this.players.map( x => x.resources ).flat();
+    allResources.forEach((resource) => resource.cycle());
   }
 
-  get totalResources() {
-    return this.players.map( player => player.community.resources ).flat().length;
+  getAvailableResources() {
+    return this.players.map( x => x.availableResources ).flat();
+  }
+
+  get people() {
+    return this.players.filter( player => player.voice == Voice.People );
+  }
+
+  get leaders() {
+    return this.players.filter( player => player.voice == Voice.Leader );
+  }
+
+  get numResources() {
+    return this.players.map( player => player.resources ).flat().length;
+  }
+
+  get numIntactResources() {
+    return this.players.map( player => player.intactResources ).flat().length;
+  }
+
+  get numAvailableResources() {
+    return this.players.map( player => player.availableResources ).flat().length;
   }
 
   get averageSentiment() {
@@ -146,10 +174,10 @@ export default class Society {
   }
 
   get leaderSentiment() {
-    return Sentiment.fromAverage( this.players.filter( player => player.voice == Voice.Leader ).map( player => player.sentiment )  )
+    return Sentiment.fromAverage( this.leaders.map( player => player.sentiment )  )
   }
 
   get peopleSentiment() {
-    return Sentiment.fromAverage( this.players.filter( player => player.voice == Voice.People ).map( player => player.sentiment )  )
+    return Sentiment.fromAverage( this.people.map( player => player.sentiment )  )
   }
 }
