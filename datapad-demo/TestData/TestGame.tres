@@ -1,0 +1,92 @@
+[gd_resource type="Resource" script_class="Game" load_steps=22 format=3 uid="uid://bajnn3n6568r6"]
+
+[ext_resource type="Script" path="res://Classes/Game.gd" id="1_6sq6o"]
+[ext_resource type="Script" path="res://Classes/Round.gd" id="1_ignvo"]
+[ext_resource type="Script" path="res://Classes/Phase.gd" id="2_1l8n7"]
+[ext_resource type="Script" path="res://Classes/Session.gd" id="3_hosl0"]
+[ext_resource type="Script" path="res://Classes/Society.gd" id="4_qqoro"]
+[ext_resource type="Script" path="res://Classes/Player.gd" id="5_vjj5v"]
+[ext_resource type="Script" path="res://Classes/SPResource.gd" id="6_6o2bn"]
+[ext_resource type="Script" path="res://Classes/Community.gd" id="7_2stho"]
+
+[sub_resource type="Resource" id="Resource_snxel"]
+script = ExtResource("2_1l8n7")
+type = "Galactic Phase"
+timeAlotted = 500
+timeRemaining = 500
+
+[sub_resource type="Resource" id="Resource_2puw2"]
+script = ExtResource("2_1l8n7")
+type = "Individual Phase"
+timeAlotted = 300
+timeRemaining = 300
+
+[sub_resource type="Resource" id="Resource_y2w86"]
+script = ExtResource("1_ignvo")
+number = 1
+phases = Array[ExtResource("2_1l8n7")]([SubResource("Resource_snxel"), SubResource("Resource_2puw2")])
+
+[sub_resource type="Resource" id="Resource_3d2yc"]
+script = ExtResource("6_6o2bn")
+title = "Ancient Tome"
+relationship = ""
+isExhausted = false
+
+[sub_resource type="Resource" id="Resource_txota"]
+script = ExtResource("6_6o2bn")
+title = "Fire Wand"
+relationship = ""
+isExhausted = false
+
+[sub_resource type="Resource" id="Resource_ub1cx"]
+script = ExtResource("7_2stho")
+title = "Fire Peeps"
+voice = ""
+isEndangered = false
+resources = Array[ExtResource("6_6o2bn")]([SubResource("Resource_3d2yc"), SubResource("Resource_txota")])
+
+[sub_resource type="Resource" id="Resource_upndn"]
+script = ExtResource("5_vjj5v")
+title = "Dain"
+community = SubResource("Resource_ub1cx")
+
+[sub_resource type="Resource" id="Resource_5xjfo"]
+script = ExtResource("6_6o2bn")
+title = "Stuff"
+relationship = ""
+isExhausted = false
+
+[sub_resource type="Resource" id="Resource_m36tg"]
+script = ExtResource("6_6o2bn")
+title = "More Stuff"
+relationship = ""
+isExhausted = true
+
+[sub_resource type="Resource" id="Resource_rvube"]
+script = ExtResource("7_2stho")
+title = "Druid Peeps"
+voice = "VoP"
+isEndangered = false
+resources = Array[ExtResource("6_6o2bn")]([SubResource("Resource_5xjfo"), SubResource("Resource_m36tg")])
+
+[sub_resource type="Resource" id="Resource_avhay"]
+script = ExtResource("5_vjj5v")
+title = "John"
+community = SubResource("Resource_rvube")
+
+[sub_resource type="Resource" id="Resource_whugk"]
+script = ExtResource("4_qqoro")
+title = "Fire Druids"
+planet = "Firetown"
+archetype = ""
+players = Array[ExtResource("5_vjj5v")]([SubResource("Resource_upndn"), SubResource("Resource_avhay")])
+
+[sub_resource type="Resource" id="Resource_3q5hv"]
+script = ExtResource("3_hosl0")
+date = "Today"
+societies = Array[ExtResource("4_qqoro")]([SubResource("Resource_whugk")])
+rounds = Array[ExtResource("1_ignvo")]([SubResource("Resource_y2w86")])
+
+[resource]
+script = ExtResource("1_6sq6o")
+Sessions = Array[Resource]([SubResource("Resource_3q5hv")])
