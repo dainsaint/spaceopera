@@ -4,6 +4,7 @@ import { getName, shuffle, range } from "./utils.js";
 import ResistCard from "./willpower/resist.js";
 import Record from "./record.js";
 import Resource from "./resource.js";
+import Card from "./cards/card.js";
 
 export default class Player {
   playerName;
@@ -46,7 +47,7 @@ export default class Player {
     this.initResources();
 
     Record.log(
-      `${this.name} is now playing as ${this.community} with ${this.resources.length} resources`
+      `${this.playerName} is now playing as ${this.community} with ${this.resources.length} resources`
     );
   }
 
@@ -149,10 +150,12 @@ export default class Player {
   }
 
   handleSmite() {
-    const resistCard = this.willpower.find((x) => x instanceof ResistCard);
+    const preventDestructionCard = this.willpower.find((card) =>
+      card.hasTags(Card.Tags.PreventsDestruction)
+    );
 
-    if (resistCard) {
-      this.playWillpower(resistCard);
+    if (preventDestructionCard) {
+      this.playWillpower(preventDestructionCard);
       return;
     }
 

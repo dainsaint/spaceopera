@@ -93,7 +93,7 @@ export default function simulate() {
     );
 
     if (toDestroy.length) {
-      const communities = toDestroy.map((x) => ({name: x.community}));
+      const communities = toDestroy.map((x) => ({name: x.name}));
       Record.log(`💀 ${printNames(communities)} die`);
       Record.increase("communities_lost", communities.length);
       toDestroy.forEach((player) => player.rollNewCommunity());
