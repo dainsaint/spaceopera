@@ -1,5 +1,6 @@
 import Drive from "../sentiment/drive.js";
 import Card from "../cards/card.js";
+import Record from "../record.js";
 
 /*
 Destroy any resource belonging to any Community 
@@ -21,13 +22,13 @@ export default class DestroyCard extends Card {
   play(player, society) {
     super.play(player, society);
 
-    const victim = society.players.find( other => other != player );
-    const resource = victim.resources.at(0);
+    const target = society.players.find( other => other != player );
+    const resource = target.takeResource();
     if( resource ) {
       resource.destroy();
-      console.log(`${player.name} destroys ${resource.name}`);
+      Record.log(`${player.name} destroys ${resource.name}`);
     } else {
-      console.log("Nothing left to destroy...");
+      Record.log("Nothing left to destroy...");
     }
 
   }

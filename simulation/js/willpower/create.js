@@ -1,4 +1,5 @@
 import Card from "../cards/card.js";
+import Record from "../record.js";
 import Resource from "../resource.js";
 
 //Discard any other Willpower card and
@@ -28,7 +29,7 @@ export default class CreateCard extends Card {
 
     const createdResource = new Resource();
 
-    console.log( `${player.name} creates ${createdResource.name}`)
+    Record.log( `${player.name} creates ${createdResource.name}`)
 
     player.addResource( createdResource );
   }

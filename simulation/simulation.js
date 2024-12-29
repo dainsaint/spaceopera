@@ -63,7 +63,7 @@ export default function simulate() {
 
       if (result.impacted)
         Record.log(
-          `GM decides ${result.impacted} resources will be impacted. ${
+          `GM will impact ${result.impacted} resources. ${
             emissary.name
           } chooses ${printNames(impacted)}.`
         );

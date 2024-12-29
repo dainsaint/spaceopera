@@ -92,19 +92,13 @@ export default class Society {
 
   takeAction() {
     const numResourcesToUse = range(1, 3);
-    const availableResources = shuffle(
-      this.players
-        .map((player) =>
-          player.resources.filter((resource) => resource.isAvailable)
-        )
-        .flat()
-    );
+    const availableResources = shuffle( this.getAvailableResources() );
 
     const resourcesForAction = availableResources.slice(0, numResourcesToUse);
     let log =
       resourcesForAction.length > 0
-        ? `${this.name} uses ${resourcesForAction[0].name} to take action.`
-        : `${this.name} has no resources available to take an action this round.`;
+        ? `${this.name} use ${resourcesForAction[0].name} to take action.`
+        : `${this.name} have no resources available to take an action this round.`;
 
     for (let i = 1; i < resourcesForAction.length; i++)
       log += ` They aid with ${resourcesForAction[i].name}.`;

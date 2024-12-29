@@ -1,8 +1,6 @@
 import Record from "../record.js";
 import SentimentRange from "../sentiment/sentimentrange.js";
 
-
-
 export default class Card {
   static Tags = {
     None: 0,

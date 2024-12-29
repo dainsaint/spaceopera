@@ -24,7 +24,7 @@ export default class WillpowerDeck extends Deck {
       [AppropriateCard, 10],
       [ConsumeCard, 10],
       [CreateCard, 10],
-      [DestroyCard, 60],
+      [DestroyCard, 1],
       [DisruptCard, 1],
       [InciteCard, 10],
       [InventCard, 10],

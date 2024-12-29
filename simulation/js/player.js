@@ -46,7 +46,7 @@ export default class Player {
     this.initResources();
 
     Record.log(
-      `${this.name} is now playing with ${this.resources.length} resources`
+      `${this.name} is now playing as ${this.community} with ${this.resources.length} resources`
     );
   }
 
@@ -130,12 +130,10 @@ export default class Player {
     );
 
     let priority = [];
-    if (
-      this.isEndangered ||
-      this.sentiment.autonomy > this.sentiment.harmony
-    )
+    if (this.isEndangered || this.sentiment.autonomy > this.sentiment.harmony)
       priority = [me, ...endangeredPlayers, ...everyoneElse];
-    else priority = [...endangeredPlayers, me, ...everyoneElse];
+    else
+      priority = [...endangeredPlayers, me, ...everyoneElse];
 
     for (let i = 0; i < resources.length; i++) {
       const resource = resources[i];
