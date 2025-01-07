@@ -78,7 +78,14 @@ const displayDistribution = (games) => {
       created: {},
       destroyed: {},
       lost: {},
-      outcomes: {},
+      outcomes: {
+        "No Resources": 0,
+        "Critical Failure": 0,
+        "Mixed Failure": 0,
+        "Mixed Success": 0,
+        "Success": 0,
+        "Critical Success": 0,
+      },
     }
   );
 
