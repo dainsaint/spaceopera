@@ -2,6 +2,11 @@ import Drive from "./drive.js";
 import { range } from "../utils.js";
 
 export default class Sentiment {
+  drama
+  autonomy
+  strategy
+  harmony
+  
   constructor(
     drama = Drive.Mid,
     autonomy = Drive.Mid,

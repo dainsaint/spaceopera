@@ -29,7 +29,7 @@ export default class WillpowerDeck extends Deck {
       [InciteCard, 10],
       [InventCard, 10],
       [LiberateCard, 5],
-      [ManipulateCard, 40],
+      [ManipulateCard, 5],
       [QuellCard, 10],
       [ResistCard, 1],
       [RevoltCard, 10],

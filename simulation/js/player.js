@@ -54,7 +54,8 @@ export default class Player {
   //RESOURCES
 
   initResources() {
-    const numResources = range(1, 2);
+    const roll = Math.random() * 6;
+    const numResources = roll < 3 ? 1 : roll < 5 ? 2 : 3
     for (let i = 0; i < numResources; i++) {
       const resource = new Resource();
       this.resources.push(resource);
@@ -131,20 +132,22 @@ export default class Player {
     );
 
     let priority = [];
-    if (this.isEndangered || this.sentiment.autonomy > this.sentiment.harmony)
+    if (me.isEndangered || me.sentiment.autonomy > me.sentiment.harmony)
       priority = [me, ...endangeredPlayers, ...everyoneElse];
     else
       priority = [...endangeredPlayers, me, ...everyoneElse];
 
+
     for (let i = 0; i < resources.length; i++) {
       const resource = resources[i];
       const player = priority.at(i);
+      if(!player) continue;
       player.addResource(resource);
 
-      if (player == me) Record.log(`${this.name} takes ${resource.name}`);
+      if (player == me) Record.log(`${me.name} takes ${resource.name}`);
       else
         Record.log(
-          `${this.name} gives ${resource.name} to ${player.name}`
+          `${me.name} gives ${resource.name} to ${player.name}`
         );
     }
   }

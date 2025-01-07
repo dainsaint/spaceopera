@@ -14,8 +14,7 @@ export default class GM {
   
   resolveRoll(roll, risk = 1) {
     const impacted = roll.filter((x) => x <= risk).length;
-    const mixed =
-      roll.some((x) => x == 4 || x == 5) && roll.every((x) => x != 6);
+    const mixed = roll.some((x) => x == 4 || x == 5) && roll.every((x) => x != 6);
     const success = roll.some((x) => x == 6);
     const crit = roll.filter((x) => x == 6).length > 1;
 

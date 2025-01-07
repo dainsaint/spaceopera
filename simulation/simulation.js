@@ -31,7 +31,7 @@ export default function simulate() {
     );
 
     Record.log(
-      `${society.name} has ${society.numIntactResources} resources; ${society.numAvailableResources} are not exhausted`
+      `${society.name} has ${society.numIntactResources} resources. ${society.numAvailableResources} are available; ${society.numIntactResources - society.numAvailableResources} are exhausted.`
     );
     society.deliberate();
 

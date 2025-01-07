@@ -1,6 +1,12 @@
 import Record from "./js/record.js";
+import Parameters from "./parameters.js";
 import simulate from "./simulation.js";
 
+let games = [];
+let logs = [];
+let currentGame = 0;
+
+Parameters.load();
 
 const printRound = ( round ) => {
   const die = [ "one", "two", "three", "four", "five", "six" ];
@@ -10,6 +16,8 @@ const printRound = ( round ) => {
 
 const displayResults = ( results, logs )  => {
   const bars = document.querySelector(".js-bars");
+  if( !(bars instanceof HTMLElement) )
+    return;
 
   bars.innerHTML = "";
 
@@ -32,12 +40,12 @@ const displayResults = ( results, logs )  => {
     `;
 
   const terminal  = document.querySelector(".js-terminal");
-  terminal.innerHTML = `${logs.map( log => {
+  terminal.innerHTML = `${logs.map( (log, i) => {
     if(log.indexOf("ROUND") == 0)
-      return `<tr><th>${log}</th></tr>`;
+      return `${i > 0 ?"</table>" : ""}<h4>${log}</h4><table>`;
     else
       return `<tr><td>${log}</td></tr>`
-  }).join("\n")}`
+  }).join("\n")}</table>`
 }
 
 const displayDistribution = (games) => {
@@ -50,9 +58,9 @@ const displayDistribution = (games) => {
       const create = cur.reduce((acc, cur) => acc + cur.response.create, 0);
       const destroy = cur.reduce((acc, cur) => acc + cur.response.destroy, 0);
       const lost = cur.reduce((acc, cur) => acc + cur.results.lost, 0);
-      const outcomes = cur.reduce((acca, cur) => {
-        acca[cur.results.label] = acca[cur.results.label] + 1 || 1;
-        return acca;
+      const outcomes = cur.reduce((acc, cur) => {
+        acc[cur.results.label] = acc[cur.results.label] + 1 || 1;
+        return acc;
       }, {});
 
       acc.total[end.resources.after] = acc.total[end.resources.after] + 1 || 1;
@@ -60,6 +68,7 @@ const displayDistribution = (games) => {
       acc.lost[lost] = acc.lost[lost] + 1 || 1;
       acc.destroyed[destroy] = acc.destroyed[destroy] + 1 || 1;
       Object.entries(outcomes).forEach(([label, count]) => {
+        acc.outcomes[label] ??= 0;
         acc.outcomes[label] = acc.outcomes[label] + count || count;
       });
       return acc;
@@ -69,37 +78,20 @@ const displayDistribution = (games) => {
       created: {},
       destroyed: {},
       lost: {},
-      outcomes: {
-        "Critical Failure": 0,
-        "Mixed Failure": 0,
-        "Mixed Success": 0,
-        "Success": 0,
-        "Critical Success": 0,
-      },
+      outcomes: {},
     }
   );
 
-  const ranges = {};
-
-  console.log( histogram );
 
   for( var key in histogram ) {
-
-    const min = Math.min(...Object.keys(histogram[key])) || 0;
-    const max = Math.max(...Object.keys(histogram[key])) || Object.keys(histogram[key]).length - 1;
     const range = Math.max(...Object.values(histogram[key]));
-
     bell.style.setProperty(`--max-${key}`, range);
-
-    ranges[key] = { min, max, range };
   }
 
   for( var key in histogram ) {
     
     const data = histogram[key];
     const keys = Object.keys(data);
-    console.log( keys );
-    const {min, max} = ranges[key];
 
     for (let i = 0; i < keys.length; i++) {
       const k = keys[i];
@@ -117,31 +109,149 @@ const displayDistribution = (games) => {
 
 
 
+let chart;
+const getChart = () => {
+  const ctx = document.getElementById("js-chart");
+
+  if( chart )
+    return chart;
+  
+  Chart.defaults.color = "white"
+
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["Round 1", "Round 2", "Round 3", "Round 4", "Round 5"],
+    },
+    options: {
+      spanGaps: true,
+      elements: {
+        line: {
+          borderWidth: 1,
+          borderColor: "rgba(158,95,179,.2)",
+          tension: 0.3,
+        },
+        point: {
+          radius: 0,
+        },
+      },
+      animation: false,
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
+      scales: {
+        left: {
+          type: "linear",
+          position: "left",
+        },
+
+        right: {
+          type: "linear",
+          position: "right",
+        },
+      },
+    },
+  });
+
+  return chart
+}
+
+
+
+
+const displayChart = (games, display = "total") => {
+
+  display = display.replace('#', '');
+
+  const outcomes = [
+    "No Resources",
+    "Critical Failure",
+    "Mixed Failure",
+    "Mixed Success",
+    "Success",
+    "Critical Success",
+  ];
+
+  // console.log( games);
+
+  const datasets = {
+    total: {
+      filter: (game) => game.resources.after,
+      color: "rgba(158,95,179,.2)",
+    },
+
+    created: {
+      filter: (game) => game.response.create,
+      color: "rgba(6,176,106,.2)",
+    },
+
+    destroyed: {
+      filter: (game) => game.response.destroy,
+      color: "rgba(245,75,67,.2)",
+    },
+
+    outcomes: {
+      filter: (game) => outcomes.indexOf( game.results.label ),
+      color: "rgba(255,153,51,.2)",
+    },
+
+    lost: {
+      filter: (game) => game.results.lost,
+      color: "rgba(160,201,229,.2)",
+    },
+  };
+
+  const handler = datasets[display];
+  if( !handler )
+    return;
+
+  const chart = getChart();
+  const { filter, color } = handler;
+
+  const data = games.map((game) => ({
+    data: game.map(filter)
+  }));
+
+  const current = data.splice(currentGame, 1)[0];
+  data.unshift( current );
+  current.borderColor = "white";
+  current.borderWidth = "2";
+
+  chart.data.datasets = data;
+  chart.options.elements.line.borderColor = color;
+  chart.update();
+};
+
+
+
+
 window.addEventListener("DOMContentLoaded", () => {
-  // loadParameters();
 
-  // document.querySelectorAll("input").forEach(input => {
-  //   const output = input.closest("li").querySelector("output");
-  //   const update = () => {
-  //     updateParameter(input.name, input.value);
-  //     if (output) output.value = input.value;
-  //   }
+  document.querySelectorAll("input").forEach(input => {
+    const outputs = document.querySelectorAll(`output[name="${input.name}"]`)
+    
+    const update = () => {
+      Parameters.set(input.name, input.value);
+      outputs.forEach(output => output.value = input.value);
+    }
 
-  //   input.addEventListener("input", () => {
-  //     update();
-  //     updatePopulation();
-  //   });
+    input.addEventListener("input", update);
+    update();
+  });
 
-  //   update();
-  // });
+  window.addEventListener("hashchange", event => {
+    displayChart(games, window.location.hash)
+  })
 
-  document.querySelectorAll(".js-view").forEach(link =>
-    link.addEventListener("click", () => {
-      const bell = document.querySelector(".js-bell");
-      bell.classList.remove("total", "created", "destroyed", "outcomes", "lost");
-      bell.classList.add(link.dataset.type);
-    })
-  )
+  // document.querySelectorAll(".js-view").forEach(link =>
+  //   link.addEventListener("click", (e) => {
+  //     e.preventDefault();
+  //     history.pushState(null, null, link.getAttribute("href"));
+  //     window.dispatchEvent(new Event("hashchange"));
+  //   })
+  // )
 
   const labels = ["Critical Failure", "Mixed Failure", "Mixed Failure", "Mixed Success", "Mixed Success", "Success", "Critical Success"];
 
@@ -183,24 +293,30 @@ window.addEventListener("DOMContentLoaded", () => {
     
   };
 
+  const updateCurrentGame = () => {
+    currentGame = Math.min( Parameters.get("currentGame") , games.length - 1);
+
+    displayResults(games.at(currentGame), logs.at(currentGame));
+    displayChart(games, window.location.hash);
+  }
+
   const run = () => {
-    const games = [];
-    const logs = [];
-    for (let i = 0; i < 1000; i++) {
+    games = [];
+    logs = [];
+    
+    for (let i = 0; i < 500; i++) {
       const game = simulate();
       games.push( retrofit(game) );
       logs.push( game.log );
     }
 
-    // console.log( games );
-
-    displayResults(games.at(-1), logs.at(-1) );
     displayDistribution(games);
+    updateCurrentGame();
   };
 
-  // updatePopulation();
+  document.querySelector(`input[name="currentGame"]`)?.addEventListener("change", updateCurrentGame);
 
-  document.querySelector("button").addEventListener("click", run);
+  document.querySelector("button")?.addEventListener("click", run);
   run();
 })
 

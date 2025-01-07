@@ -8,16 +8,23 @@
   /* Colors from flatuicolors https://flatuicolors.com/palette/defo */
 }
 
+.seg {
+  display: grid;
+  grid-template-rows: min-content 1fr;
+}
+
 .bars {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: end;
-  ;
+
   gap: 5px;
   width: 100%;
   box-sizing: border-box;
-  height: 20vh;
+  min-height: 20vh;
+
+  align-self: stretch;
   border: 2px solid var(--background-hover);
   padding: 16px;
   padding-bottom: 0px;
@@ -53,7 +60,13 @@
 
 input {
   display: inline-block !important;
+  margin-bottom: 0px;
+  padding: 0px;
   /* width: 100px !important; */
+}
+
+input[type="range"] {
+  translate: 0 25%;
 }
 
 ul {
@@ -138,107 +151,91 @@ li {
   opacity: .5;
 }
 
-.bells.total {
+section:has([data-type="total"]:target) .bells {
   --max: var(--max-total);
 }
 
-.bells.created {
+section:has([data-type="created"]:target) .bells {
   --max: var(--max-created);
 }
 
-.bells.destroyed {
+section:has([data-type="destroyed"]:target) .bells {
   --max: var(--max-destroyed);
 }
 
-.bells.outcomes {
+section:has([data-type="outcomes"]:target) .bells {
   --max: var(--max-outcomes);
 }
 
-.bells.lost {
+section:has([data-type="lost"]:target) .bells {
   --max: var(--max-lost);
 }
 
-.bells.total .bar.bar-total {
+section:has([data-type="total"]:target) .bells .bar.bar-total {
   display: block;
 }
 
-.bells.created .bar.bar-created {
+section:has([data-type="created"]:target) .bells .bar.bar-created {
   display: block;
   background: var(--positive);
 }
 
-.bells.destroyed .bar.bar-destroyed {
+section:has([data-type="destroyed"]:target) .bells .bar.bar-destroyed {
   display: block;
   background: var(--negative);
 }
 
-.bells.outcomes .bar.bar-outcomes {
+section:has([data-type="outcomes"]:target) .bells .bar.bar-outcomes {
   display: block;
   background: var(--outcomes);
 }
 
-.bells.lost .bar.bar-lost {
+section:has([data-type="lost"]:target) .bells .bar.bar-lost {
   display: block;
   background: var(--lost);
 }
 
-.js-view {
-  cursor: pointer;
+.grid-two {
+  display: grid;
+  grid-template-columns: calc((100% - 16px) / 2) calc((100% - 16px) / 2);
+  gap: 16px;
+  justify-content: stretch;
 }
 
-
 .js-view {
+  cursor: pointer;
   color: var(--color);
   padding: 5px;
   border-radius: 3px;
   text-decoration: none;
+  scroll-margin-top: 200px;
 
   &:hover {
     background: var(--button-hover);
   }
-}
 
-.js-view[data-type="total"] {
-  --color: var(--secondary);
-
-  section:has(.total) & {
+  &:target {
     background: var(--color);
     color: var(--text-main);
   }
 }
 
+.js-view[data-type="total"] {
+  --color: var(--secondary);
+}
+
 .js-view[data-type="created"] {
   --color: var(--positive);
-
-  section:has(.created) & {
-    background: var(--color);
-    color: white;
-  }
 }
 
 .js-view[data-type="destroyed"] {
   --color: var(--negative);
-
-  section:has(.destroyed) & {
-    background: var(--color);
-    color: white;
-  }
 }
 
 .js-view[data-type="outcomes"] {
   --color: var(--outcomes);
-
-  section:has(.outcomes) & {
-    background: var(--color);
-    color: white;
-  }
 }
 
 .js-view[data-type="lost"] {
   --color: var(--lost);
-
-  section:has(.lost) & {
-    background: var(--color);
-    color: white;
-  }
 }

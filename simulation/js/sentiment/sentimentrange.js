@@ -26,6 +26,9 @@ export default class SentimentRange {
     if (sentiment.strategy >= this.strategy[0] && sentiment.strategy <= this.strategy[1])
       rating++;
 
+    if (sentiment.harmony >= this.harmony[0] && sentiment.harmony <= this.harmony[1])
+      rating++;
+
     return rating;
   }
 }

@@ -25,7 +25,7 @@ export default class SeizeCard extends Card {
     const resource = target.takeResource();
     if (resource) {
       player.addResource(resource);
-      Record.log(`${player.name} seizes ${resource.name} from ${target.name}`);
+      Record.log(`☠️ ${player.name} seizes ${resource.name} from ${target.name}`);
     } else {
       Record.log("Nothing left to take...");
     }
