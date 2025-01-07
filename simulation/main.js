@@ -236,21 +236,7 @@ const displayChart = (games, display = "total") => {
 
 window.addEventListener("DOMContentLoaded", () => {
 
-  document.querySelectorAll("input").forEach(input => {
-    const outputs = document.querySelectorAll(`output[name="${input.name}"]`)
-    
-    const update = () => {
-      Parameters.set(input.name, input.value);
-      outputs.forEach(output => output.value = input.value);
-    }
 
-    input.addEventListener("input", update);
-    update();
-  });
-
-  window.addEventListener("hashchange", event => {
-    displayChart(games, window.location.hash)
-  })
 
   // document.querySelectorAll(".js-view").forEach(link =>
   //   link.addEventListener("click", (e) => {
@@ -321,9 +307,26 @@ window.addEventListener("DOMContentLoaded", () => {
     updateCurrentGame();
   };
 
-  document.querySelector(`input[name="currentGame"]`)?.addEventListener("change", updateCurrentGame);
+
+  document.querySelectorAll("input").forEach((input) => {
+    const outputs = document.querySelectorAll(`output[name="${input.name}"]`);
+
+    const update = () => {
+      Parameters.set(input.name, input.value);
+      outputs.forEach((output) => (output.value = input.value));
+    };
+
+    input.addEventListener("input", update);
+    update();
+  });
+
+  document.querySelector(`input[name="currentGame"]`)?.addEventListener("input", updateCurrentGame);
 
   document.querySelector("button")?.addEventListener("click", run);
+
+      window.addEventListener("hashchange", (event) => {
+        displayChart(games, window.location.hash);
+      });
   run();
 })
 
