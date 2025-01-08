@@ -197,7 +197,7 @@ section:has([data-type="lost"]:target) .bells .bar.bar-lost {
 
 .grid-two {
   display: grid;
-  grid-template-columns: calc((100% - 16px) / 2) calc((100% - 16px) / 2);
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 16px;
   justify-content: stretch;
 }
