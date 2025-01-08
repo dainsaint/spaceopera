@@ -200,6 +200,10 @@ section:has([data-type="lost"]:target) .bells .bar.bar-lost {
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 16px;
   justify-content: stretch;
+  
+  & > * {
+    max-width: 100%
+    }
 }
 
 .js-view {
