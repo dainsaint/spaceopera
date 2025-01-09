@@ -9,8 +9,8 @@ const Parameters = {
     this.save();
   },
 
-  get(name) {
-    return parameters[name];
+  get(name, defaultValue) {
+    return parameters.hasOwnProperty(name) ? parameters[name] : defaultValue;
   },
 
   glean() {

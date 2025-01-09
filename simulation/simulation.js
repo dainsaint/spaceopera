@@ -4,12 +4,14 @@ import WillpowerDeck from "./js/willpowerdeck.js";
 
 import { printNames } from "./js/utils.js";
 import Record from "./js/record.js";
-
+import Parameters from "./parameters.js";
 
 export default function simulate() {
+  Record.reset();
+
   const gm = new GM();
   const deck = new WillpowerDeck();
-  const society = new Society(8, 3);
+  const society = new Society(Parameters.get("communities"), Parameters.get("leaders"));
 
   Record.reset();
 
@@ -17,6 +19,7 @@ export default function simulate() {
     Record.newRound();
 
     Record.set(`resources`, society.numResources);
+    
 
     // Universal Phase
     if (roundNumber > 0) {
@@ -105,7 +108,10 @@ export default function simulate() {
     }
   }
 
-  for (let i = 0; i < 5; i++) {
+  
+  Record.log( society.players.map( player => `<span class="tag ${player.voice.toLowerCase()}">${player.voice}</span> ${player.name}`).join("<br/>") );
+
+  for (let i = 0; i < Parameters.get("rounds", 5); i++) {
     Record.log(`ROUND ${i + 1}`);
     round(i);
   }

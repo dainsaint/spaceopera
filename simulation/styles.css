@@ -52,7 +52,7 @@
     top: 0px;
     left: 50%;
     translate: -50% -100%;
-    font-size: 16px;
+    font-size: 12px;
     font-family: sans-serif;
   }
 }
@@ -111,22 +111,23 @@ body {
 
 main {
   display: flex;
+  /* grid-template-columns: max-content 1fr; */
   flex-wrap: wrap;
   flex-direction: row;
   gap: 16px;
+  max-height: 100%;
 }
 
 aside {
-  flex-grow: 1;
-  min-width: min(100%, max-content);
+  flex: 1 0 max-content;
+  & > * {
+    position: sticky;
+  }
 }
 
 section {
-  flex-grow: 5;
-  min-width: min(100%, 500px);
-  box-sizing: border-box;
+  flex: 5 1 400px;
 }
-
 
 li {
   display: block;
@@ -196,14 +197,19 @@ section:has([data-type="lost"]:target) .bells .bar.bar-lost {
 }
 
 .grid-two {
+  --gap: 16px;
+  --grid-column-count: 100;
+  --grid-gap-count: calc(var(--grid-column-count) - 1);
+  --grid-total-gap-width: calc(var(--grid-gap-count) * var(--gap));
+  --grid-max-width: calc((100% - var(--grid-total-gap-width)) / var(--grid-column-count));
+  --grid-min-width: 400px;
+  --grid-basis: clamp(min(var(--grid-min-width), 100%), 100%, var(--grid-max-width));
+
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 16px;
+  gap: var(--gap);
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-basis), 1fr));
   justify-content: stretch;
-  
-  & > * {
-    max-width: 100%
-    }
+
 }
 
 .js-view {
@@ -242,4 +248,36 @@ section:has([data-type="lost"]:target) .bells .bar.bar-lost {
 
 .js-view[data-type="lost"] {
   --color: var(--lost);
+}
+
+
+.tag {
+  font-size: 12px;
+  border-radius: 2px;
+  padding: 4px;
+  color: white;
+  background: black;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.tag.leader {
+  background: var(--outcomes);
+}
+
+.tag.people {
+  background: var(--positive);
+}
+
+td {
+  word-wrap: wrap;
+}
+
+table {
+  table-layout: fixed;
+}
+
+
+button.active {
+  background: var(--positive);
 }

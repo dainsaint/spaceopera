@@ -1,6 +1,7 @@
 import Resource from "./resource.js";
 import Record from "./record.js";
 import { printNames, range, shuffle } from "./utils.js";
+import Parameters from "../parameters.js";
 
 export default class GM {
 
@@ -9,7 +10,9 @@ export default class GM {
   createOnMixed = .4;
 
   constructor() {
-
+    this.createOnSuccess = Parameters.get("success") / 100;
+    this.createOnMixed = Parameters.get("mixed") / 100;
+    this.destroyOnImpact = Parameters.get("impacted") / 100;
   }
   
   resolveRoll(roll, risk = 1) {
@@ -56,7 +59,7 @@ export default class GM {
   }
 
   smite( society ) {
-    const numberToSmite = range(0, 4);
+    const numberToSmite = range(0, Parameters.get("smite", 4));
     const playersToSmite = shuffle( society.players.filter( x => x.resources.length ) ).slice(0, numberToSmite);
     
     if( !playersToSmite.length )

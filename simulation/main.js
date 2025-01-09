@@ -125,11 +125,10 @@ const getChart = () => {
   
   Chart.defaults.color = "white"
 
+
   chart = new Chart(ctx, {
     type: "line",
-    data: {
-      labels: ["Round 1", "Round 2", "Round 3", "Round 4", "Round 5"],
-    },
+    data: {},
     options: {
       spanGaps: true,
       elements: {
@@ -137,6 +136,7 @@ const getChart = () => {
           borderWidth: 1,
           borderColor: "rgba(158,95,179,.2)",
           tension: 0.3,
+          pointRadius: 0,
         },
         point: {
           radius: 0,
@@ -149,14 +149,27 @@ const getChart = () => {
         },
       },
       scales: {
-        left: {
+        y: {
           type: "linear",
           position: "left",
+          min: 0,
+          ticks: {
+            stepSize: 1,
+          },
         },
 
-        right: {
+        y1: {
           type: "linear",
           position: "right",
+          ticks: {
+            stepSize: 1,
+          },
+          afterDataLimits: (axis) => {
+            if (axis.chart.scales.y._range) {
+              axis.min = axis.chart.scales.y._range.min;
+              axis.max = axis.chart.scales.y._range.max;
+            }
+          },
         },
       },
     },
@@ -164,8 +177,6 @@ const getChart = () => {
 
   return chart
 }
-
-
 
 
 const displayChart = (games, display = "total") => {
@@ -181,7 +192,11 @@ const displayChart = (games, display = "total") => {
     "Critical Success",
   ];
 
-  // console.log( games);
+  const labels = [];
+  for (let i = 0; i < Parameters.get("rounds", 5); i++) {
+    labels.push(`Round ${i + 1}`);
+  }
+
 
   const datasets = {
     total: {
@@ -226,8 +241,10 @@ const displayChart = (games, display = "total") => {
   current.borderColor = "white";
   current.borderWidth = "2";
 
+  chart.data.labels = labels;
   chart.data.datasets = data;
   chart.options.elements.line.borderColor = color;
+
   chart.update();
 };
 
@@ -235,16 +252,6 @@ const displayChart = (games, display = "total") => {
 
 
 window.addEventListener("DOMContentLoaded", () => {
-
-
-
-  // document.querySelectorAll(".js-view").forEach(link =>
-  //   link.addEventListener("click", (e) => {
-  //     e.preventDefault();
-  //     history.pushState(null, null, link.getAttribute("href"));
-  //     window.dispatchEvent(new Event("hashchange"));
-  //   })
-  // )
 
   const labels = ["Critical Failure", "Mixed Failure", "Mixed Failure", "Mixed Success", "Mixed Success", "Success", "Critical Success"];
 
@@ -297,7 +304,7 @@ window.addEventListener("DOMContentLoaded", () => {
     games = [];
     logs = [];
     
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < Parameters.get("games", 500); i++) {
       const game = simulate();
       games.push( retrofit(game) );
       logs.push( game.log );
@@ -305,6 +312,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     displayDistribution(games);
     updateCurrentGame();
+
+    document.querySelector("button")?.classList.remove("active");
   };
 
 
@@ -314,6 +323,12 @@ window.addEventListener("DOMContentLoaded", () => {
     const update = () => {
       Parameters.set(input.name, input.value);
       outputs.forEach((output) => (output.value = input.value));
+
+      document.querySelector(`input[name="currentGame"]`)?.setAttribute("max", Parameters.get("games"))
+
+      if( input.closest("details") ) {
+        document.querySelector("button")?.classList.add("active");
+      }
     };
 
     input.addEventListener("input", update);
@@ -321,15 +336,11 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   document.querySelector(`input[name="currentGame"]`)?.addEventListener("input", updateCurrentGame);
-
   document.querySelector("button")?.addEventListener("click", run);
 
-      window.addEventListener("hashchange", (event) => {
-        displayChart(games, window.location.hash);
-      });
+  window.addEventListener("hashchange", (event) => {
+    displayChart(games, window.location.hash);
+  });
+
   run();
 })
-
-
-// Record.debug = true;
-// simulate();
