@@ -72,6 +72,7 @@ export default class Player {
     if (!intact.length) return null;
 
     const resource = intact.pop();
+    const numResources = this.resources.length;
     this.resources.splice(this.resources.indexOf(resource), 1);
     this.state.lost++;
     return resource;
@@ -140,8 +141,8 @@ export default class Player {
 
     for (let i = 0; i < resources.length; i++) {
       const resource = resources[i];
-      const player = priority.at(i);
-      if(!player) continue;
+      const player = priority.at(i % priority.length);
+      
       player.addResource(resource);
 
       if (player == me) Record.log(`${me.name} takes ${resource.name}`);

@@ -11,10 +11,10 @@ const getName = (type) => {
 
 const transformName = (name, type) => {
   const names = name.split(' ');
-  let newName = getName(type);
-  while( !names.some( x => newName.includes(x) )) {
+  let newName = "";
+  do {
     newName = getName(type);
-  }
+  } while (!names.some((x) => newName.includes(x))); 
 
   return newName;
 }

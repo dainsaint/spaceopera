@@ -29,8 +29,7 @@ export default class LiberateCard extends Card {
         resources.push( leader.takeResource() );
     });
 
-    player.distribute(resources, society.players);
-    
+    player.distribute(resources, society.players);    
   }
 
 }
