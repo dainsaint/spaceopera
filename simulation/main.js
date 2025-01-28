@@ -53,20 +53,20 @@ const displayDistribution = (games) => {
 
   bell.innerHTML = "";
   const histogram = games.reduce(
-    (acc, cur) => {
-      const end = cur.at(-1);
-      const create = cur.reduce((acc, cur) => acc + cur.response.create, 0);
-      const destroy = cur.reduce((acc, cur) => acc + cur.response.destroy, 0);
-      const lost = cur.reduce((acc, cur) => acc + cur.results.lost, 0);
-      const outcomes = cur.reduce((acc, cur) => {
-        acc[cur.results.label] = acc[cur.results.label] + 1 || 1;
+    (acc, round) => {
+      const end = round.at(-1);
+      const create = round.reduce((acc, round) => acc + round.response.create, 0);
+      const destroy = round.reduce((acc, round) => acc + round.response.destroy, 0);
+      const lost = round.reduce((acc, round) => acc + round.results.lost, 0);
+      const outcomes = round.reduce((acc, round) => {
+        acc[round.results.label] = acc[round.results.label] + 1 || 1;
         return acc;
       }, {});
 
       acc.total[end.resources.after] = acc.total[end.resources.after] + 1 || 1;
       acc.created[create] = acc.created[create] + 1 || 1;
-      acc.lost[lost] = acc.lost[lost] + 1 || 1;
       acc.destroyed[destroy] = acc.destroyed[destroy] + 1 || 1;
+      acc.lost[lost] = acc.lost[lost] + 1 || 1;
       Object.entries(outcomes).forEach(([label, count]) => {
         acc.outcomes[label] ??= 0;
         acc.outcomes[label] = acc.outcomes[label] + count || count;
@@ -182,6 +182,7 @@ const getChart = () => {
 const displayChart = (games, display = "total") => {
 
   display = display.replace('#', '');
+  console.log( games );
 
   const outcomes = [
     "No Resources",
@@ -220,8 +221,8 @@ const displayChart = (games, display = "total") => {
     },
 
     lost: {
-      filter: (game) => game.results.lost,
-      color: "rgba(160,201,229,.2)",
+      filter: (game, i, games) => games.slice(0, i + 1).reduce((sum, game) => sum + game.results.lost, 0),
+      color: "rgba(56, 72, 92,.2)",
     },
   };
 
