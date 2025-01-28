@@ -6,6 +6,7 @@ import CreateCard from "./willpower/create.js";
 import DestroyCard from "./willpower/destroy.js";
 import DisruptCard from "./willpower/disrupt.js";
 import InciteCard from "./willpower/incite.js";
+import InfluenceCard from "./willpower/influence.js";
 import InventCard from "./willpower/invent.js";
 import LiberateCard from "./willpower/liberate.js";
 import ManipulateCard from "./willpower/manipulate.js";
@@ -28,10 +29,11 @@ export default class WillpowerDeck extends Deck {
       [DisruptCard, 1],
       [InciteCard, 10],
       [InventCard, 10],
+      [InfluenceCard, 5],
       [LiberateCard, 5],
       [ManipulateCard, 5],
       [QuellCard, 10],
-      [ResistCard, 1],
+      [ResistCard, 20],
       [RevoltCard, 10],
       [SacrificeCard, 10],
       [SeizeCard, 10],

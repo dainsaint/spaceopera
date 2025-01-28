@@ -29,7 +29,7 @@ export default class CreateCard extends Card {
 
     const createdResource = new Resource();
 
-    Record.log( `${player.name} creates ${createdResource.name}`)
+    Record.log( `${player.name} creates ${createdResource.name}, discarding ${worstCard.name} and exhausting ${resource.name}`)
 
     player.addResource( createdResource );
   }

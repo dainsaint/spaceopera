@@ -5,7 +5,7 @@ import SentimentRange from "./sentiment/sentimentrange.js";
 import Drive from "./sentiment/drive.js";
 import Sentiment from "./sentiment/sentiment.js";
 import Record from "./record.js";
-
+import Parameters from "../parameters.js";
 
 
 const wouldDonateResource = new SentimentRange(
@@ -20,6 +20,8 @@ export default class Society {
   name;
   players;
   risk = 1;
+
+  emissaries = [];
 
   constructor(numPlayers, numLeaders) {
     this.name = getName("society");
@@ -84,14 +86,24 @@ export default class Society {
   }
 
   electEmissary() {
-    const potentialEmissarys = this.players.filter(
-      (player) => player.voice == Voice.Leader
-    );
-    return shuffle(potentialEmissarys).at(0);
+    if( this.emissaries.length ) {
+      const emissary = this.emissaries.at(-1);
+      this.emissaries = [];
+      return emissary;
+    } else {
+      const potentialEmissarys = this.players.filter(
+        (player) => player.voice == Voice.Leader
+      );
+      return shuffle(potentialEmissarys).at(0);
+    }
+  }
+  
+  forceEmissary(player) {
+    this.emissaries.push(player);
   }
 
   takeAction() {
-    const numResourcesToUse = range(1, 3);
+    const numResourcesToUse = range(1, Parameters.get("maxresources", 3));
     const availableResources = shuffle( this.getAvailableResources() );
 
     const resourcesForAction = availableResources.slice(0, numResourcesToUse);
@@ -100,8 +112,9 @@ export default class Society {
         ? `${this.name} use ${resourcesForAction[0].name} to take action.`
         : `${this.name} have no resources available to take an action this round.`;
 
-    for (let i = 1; i < resourcesForAction.length; i++)
-      log += ` They aid with ${resourcesForAction[i].name}.`;
+    const additionalResources = resourcesForAction.slice(1);
+    if (additionalResources.length)
+      log += ` They aid with ${printNames(additionalResources)}`;
 
     resourcesForAction.forEach( resource => resource.use() );
 
@@ -149,6 +162,10 @@ export default class Society {
 
   get leaders() {
     return this.players.filter( player => player.voice == Voice.Leader );
+  }
+
+  get resources() {
+    return this.players.map( player => player.resources ).flat();
   }
 
   get numResources() {

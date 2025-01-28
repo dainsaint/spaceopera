@@ -26,7 +26,7 @@ export default class DestroyCard extends Card {
     const resource = target.takeResource();
     if( resource ) {
       resource.destroy();
-      Record.log(`${player.name} destroys ${resource.name}`);
+      Record.log(`💥 ${player.name} destroys ${resource.name}`);
     } else {
       Record.log("Nothing left to destroy...");
     }

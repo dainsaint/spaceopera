@@ -12,6 +12,7 @@ export default function simulate() {
   const gm = new GM();
   const deck = new WillpowerDeck();
   const society = new Society(Parameters.get("communities"), Parameters.get("leaders"));
+  society.deck = deck;
 
   Record.reset();
 
@@ -34,13 +35,13 @@ export default function simulate() {
     );
 
     Record.log(
-      `${society.name} has ${society.numIntactResources} resources. ${society.numAvailableResources} are available; ${society.numIntactResources - society.numAvailableResources} are exhausted.`
+      `${society.name} have ${society.numIntactResources} resources. ${society.numAvailableResources} are available; ${society.numIntactResources - society.numAvailableResources} are exhausted.`
     );
     society.deliberate();
 
     //Galactic Phase
     const emissary = society.electEmissary();
-    Record.log(`${society.name} sends ${emissary.name} to the dais.`);
+    Record.log(`${society.name} send ${emissary.name} to the dais.`);
 
     let actionsToTake = roundNumber == 0 ? 1 : 2;
 
@@ -55,8 +56,10 @@ export default function simulate() {
 
       Record.log(`🌟 Action ${i + 1}: ` + log);
 
+
       const roll = society.roll(resources);
-      Record.log(`🎲 ${emissary.name} rolls ${roll.length}d6: `, roll);
+      if( resources.length )
+        Record.log(`🎲 ${emissary.name} rolls ${roll.length}d6: `, roll);
 
       const risk = society.risk;
       const result = gm.resolveRoll(roll, risk);

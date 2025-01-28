@@ -17,4 +17,10 @@ export default class InciteCard extends Card {
 
     this.tags = Card.Tags.AffectsLeadership;
   }
+
+    // play( player, society ) {
+    //   super.play(player, society);
+    //   society.forceEmissary(player);
+    //   Record.log(`💫 ${player.name} is the emissary now`)
+    // }
 }

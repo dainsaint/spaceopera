@@ -1,5 +1,6 @@
 import Drive from "../sentiment/drive.js";
 import Card from "../cards/card.js";
+import Record from "../record.js";
 
 //Act as the Emissary for this round. Discard this card. 
 
@@ -14,4 +15,13 @@ export default class DisruptCard extends Card {
 
     this.tags = Card.Tags.AffectsLeadership;
   }
+
+
+  play( player, society ) {
+    super.play(player, society);
+    society.forceEmissary(player);
+    Record.log(`💫 ${player.name} is the emissary now`)
+  }
+
+  
 }

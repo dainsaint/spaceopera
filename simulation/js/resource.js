@@ -8,8 +8,8 @@ export default class Resource {
   isDestroyed = false;
   isTransformed = false;
 
-  constructor() {
-    this.name = getName("resource");
+  constructor(name = "") {
+    this.name = name || getName("resource");
     Record.increase("resources_created");
   }
 
@@ -19,6 +19,10 @@ export default class Resource {
 
   exhaust() {
     this.isExhausted = true;
+  }
+  
+  refresh() {
+    this.isExhausted = false;
   }
 
   destroy() {

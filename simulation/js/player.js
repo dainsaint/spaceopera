@@ -54,8 +54,11 @@ export default class Player {
   //RESOURCES
 
   initResources() {
+    const isRoundOne = Record.ledger.length <= 1;
+    const highResources = isRoundOne ? 2 : 1;
+    const midResources = isRoundOne ? 2 : 1;
     const roll = Math.random() * 6;
-    const numResources = roll < 3 ? 1 : roll < 5 ? 2 : 3
+    const numResources = roll < 4 ? 1 : roll < 5 ? midResources : highResources
     for (let i = 0; i < numResources; i++) {
       const resource = new Resource();
       this.resources.push(resource);
@@ -72,7 +75,6 @@ export default class Player {
     if (!intact.length) return null;
 
     const resource = intact.pop();
-    const numResources = this.resources.length;
     this.resources.splice(this.resources.indexOf(resource), 1);
     this.state.lost++;
     return resource;
@@ -87,6 +89,7 @@ export default class Player {
   drawWillpower(deck) {
     const card = deck.draw();
     if (card) this.willpower.push(card);
+    return card;
   }
 
   decideWillpower(society) {
@@ -117,13 +120,17 @@ export default class Player {
     this.willpower.splice(index, 1);
   }
 
+  receiveWillpower(card) {
+    this.willpower.push( card );
+  }
+
   //DECISION MAKING
 
   chooseImpacted(count, resources) {
     return shuffle(resources).slice(0, count);
   }
 
-  distribute(resources, players) {
+  distribute(resources, players, icon = "") {
     const me = this;
     const endangeredPlayers = shuffle(
       players.filter((x) => x.state.endangered && x != me)
@@ -145,10 +152,10 @@ export default class Player {
       
       player.addResource(resource);
 
-      if (player == me) Record.log(`${me.name} takes ${resource.name}`);
+      if (player == me) Record.log(`${icon}${me.name} takes ${resource.name}`);
       else
         Record.log(
-          `${me.name} gives ${resource.name} to ${player.name}`
+          `${icon}${me.name} gives ${resource.name} to ${player.name}`
         );
     }
   }
